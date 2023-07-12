@@ -33,7 +33,10 @@ def insertkey(license, buykey):
         print(buykey)
         datenow = requests.get('https://mmoshop.me/datenow.php').text
         now = datetime.strptime(datenow, '%Y-%m-%d').date()
-        expire_date = now + timedelta(days=31)
+        if 'REEL1UPLOAD' in buykey:
+            expire_date = now + timedelta(days=31)
+        if 'REEL3UPLOAD' in buykey:
+            expire_date = now + timedelta(days=93)
         start_date = now.strftime('%Y-%m-%d')
         expire_date = expire_date.strftime('%Y-%m-%d')
 
@@ -79,4 +82,21 @@ def update_expire(license):
     except Exception as e:
         print(e)
         return None
-
+@router.get("/buykey")
+def buykey(token: int, month: int):
+    if token == 3991:
+        if month == 1:
+            result_str = ''.join((random.choice('ABCDFGHJIKLMNOPQRSTUVWXYZ1234567890') for i in range(18)))
+            Key = 'REEL1UPLOAD' + result_str
+        elif month == 3:
+            result_str = ''.join((random.choice('ABCDFGHJIKLMNOPQRSTUVWXYZ1234567890') for i in range(18)))
+            Key = 'REEL3UPLOAD' + result_str
+        db = get_mysql()
+        cursor = db.cursor(dictionary=True)
+        insert_query = "INSERT INTO reeluploadv3 (buykey) VALUES (%s)"
+        cursor.execute(insert_query, (Key,))
+        db.commit()
+        print(Key)
+        return 'Inserted'
+    else:
+        return 'Token not valid'
