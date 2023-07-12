@@ -5,10 +5,10 @@ def get_mysql():
     try:
         mydb = mysql.connector.connect(
             host="184.168.98.120",
-            user="reelupload",
-            password="U%3Xq2JNQ(ef",
+            user="reeluploadv4",
+            password="rp[Tbgtr(xbu",
             port="3306",
-            database="reelupload"
+            database="reeluploadv4"
         )
         return mydb
     except:
