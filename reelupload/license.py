@@ -97,6 +97,6 @@ def buykey(token: int, month: int):
         cursor.execute(insert_query, (Key,))
         db.commit()
         print(Key)
-        return 'Inserted'
+        return {"Buykey": Key}
     else:
         return 'Token not valid'
