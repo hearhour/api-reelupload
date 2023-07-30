@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from connection import get_mysql
 import requests
 from datetime import datetime, timedelta
+from datetime import date
 import random
 import string
 
@@ -30,6 +31,11 @@ def read_rootsss(license):
     except:
         return None
     
+@router.get("/get_current_date")
+def get_current_date():
+    current_date = date.today()
+    formatted_date = current_date.strftime("%Y-%m-%d")
+    return formatted_date
 
 @router.get("/license_update")
 def license_update():
