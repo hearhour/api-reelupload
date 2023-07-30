@@ -31,6 +31,15 @@ def read_rootsss(license):
         return None
     
 
+@router.get("/license_update")
+def license_update():
+    try:
+        info = {'version': '4.0.5', 'info': ['Fix bug', 'Update Scheduled', 'Update Delete Video', 'Update Save Proxy', 'Fix Bug Youtube']}
+        return info
+    except:
+        return None
+    
+
 @router.get("/insertkey")
 def insertkey(license, buykey):
     try:
