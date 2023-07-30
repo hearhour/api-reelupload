@@ -14,6 +14,10 @@ def generate_random_text():
     return random_text
 
 
+@router.get("/status")
+def status():
+    return True
+
 @router.get("/datakey")
 def read_rootsss(license):
     try:
