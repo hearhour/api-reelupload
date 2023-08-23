@@ -40,7 +40,7 @@ def get_current_date():
 @router.get("/license_update")
 def license_update():
     try:
-        info = {'version': '4.0.7', 'info': ['Fix bug', 'Fix Bug Youtube', 'Fix Get List Videos']}
+        info = {'version': '4.0.8', 'info': ['Fixed Post Scheduled', 'Update Limit Post']}
         return info
     except:
         return None
