@@ -159,3 +159,8 @@ def ld_insertkey(license: str):
         return {"message": "License value inserted successfully."}
     except Exception as e:
         return {"message": f"An error occurred: {e}"}
+    
+    
+@router.get("/status_ld")
+def status_ld():
+    return 'work'
