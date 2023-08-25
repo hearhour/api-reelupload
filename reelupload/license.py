@@ -163,4 +163,4 @@ def ld_insertkey(license: str):
     
 @router.get("/status_ld")
 def status_ld():
-    return 'work'
+    return {'status' : 'work'}
