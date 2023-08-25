@@ -1,6 +1,7 @@
 
 from fastapi import APIRouter
 from connection import get_mysql
+from connection import get_mysql_LD
 import requests
 from datetime import datetime, timedelta
 from datetime import date
@@ -119,3 +120,42 @@ def buykey(token: int, month: int):
         return {"Buykey": Key}
     else:
         return 'Token not valid'
+
+
+
+
+
+
+
+@router.get("/ld_datakey")
+def ld_read_rootsss(license):
+    try:
+        db = db = get_mysql_LD()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM licenses WHERE license = %s", (license,))
+        rows = cursor.fetchone()
+        print(rows)
+        return rows
+    except:
+        return None
+
+@router.get("/ld_insertkey")
+def ld_insertkey(license: str):
+    try:
+        datenow = requests.get('https://mmoshop.me/datenow.php').text
+        now = datetime.strptime(datenow, '%Y-%m-%d').date()
+
+        start_date = now.strftime('%Y-%m-%d')
+        print(start_date)
+        db = get_mysql_LD()
+        cursor = db.cursor(dictionary=True)
+
+        insert_query = "INSERT INTO licenses (license, start) VALUES (%s, %s)"  # Replace 'licenses' with your actual table name
+        cursor.execute(insert_query, (license, start_date))
+        db.commit()
+
+        cursor.close()
+        db.close()
+        return {"message": "License value inserted successfully."}
+    except Exception as e:
+        return {"message": f"An error occurred: {e}"}
