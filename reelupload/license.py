@@ -233,7 +233,7 @@ def update_expire(license):
 
 
 @router.get("/farmreel/buykey")
-def buykey(token: int, month: int, note: str = ''):
+def buykey(token: int, month: int, note: str = '', name: str = ''):
     if token == 3991:
         if month == 1:
             result_str = ''.join((random.choice('ABCDFGHJIKLMNOPQRSTUVWXYZ1234567890') for i in range(15)))
@@ -243,8 +243,8 @@ def buykey(token: int, month: int, note: str = ''):
             Key = 'FARMREEL3' + result_str
         db = get_mysql_farmreel()
         cursor = db.cursor(dictionary=True)
-        insert_query = "INSERT INTO users (buykey, note) VALUES (%s, %s)"  # Add "note" field
-        cursor.execute(insert_query, (Key, note))  # Pass the "note" parameter
+        insert_query = "INSERT INTO users (buykey, note, name) VALUES (%s, %s)"  # Add "note" field
+        cursor.execute(insert_query, (Key, note, name))  # Pass the "note" parameter
         db.commit()
         return {"Buykey": Key}
     else:
