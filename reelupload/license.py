@@ -246,6 +246,7 @@ def buykey(token: int, month: int, note: str = '', name: str = ''):
         insert_query = "INSERT INTO users (buykey, note, name) VALUES (%s, %s)"  # Add "note" field
         cursor.execute(insert_query, (Key, note, name))  # Pass the "note" parameter
         db.commit()
+        print('')
         return {"Buykey": Key}
     else:
         return 'Token not valid'
