@@ -28,3 +28,17 @@ def get_mysql_LD():
         return mydb
     except:
         return None
+    
+def get_mysql_farmreel():
+    mydb = None
+    try:
+        mydb = mysql.connector.connect(
+            host="184.168.98.120",
+            user="farmreel",
+            password="RIsnb&j!!.mH",
+            port="3306",
+            database="farmreel"
+        )
+        return mydb
+    except:
+        return None
