@@ -8,9 +8,9 @@ import os
 app = FastAPI()
 
 
-if not os.path.exists("images"):
-    os.makedirs("images")
-app.mount("/images", StaticFiles(directory="images"), name="images")
+if not os.path.exists("version"):
+    os.makedirs("version")
+app.mount("/version", StaticFiles(directory="version"), name="version")
 
 app.include_router(license.router)
 
