@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, Form
 from connection import get_mysql
 from connection import get_mysql_LD
 from connection import get_mysql_farmreel
@@ -7,7 +7,9 @@ import requests
 from datetime import datetime, timedelta
 from datetime import date
 import random
+import json
 import string
+import os
 
 router = APIRouter()
 
@@ -286,3 +288,35 @@ async def upload_file(file: UploadFile):
         return {"message": "File uploaded successfully"}
     except Exception as e:
         return {"error": str(e)}
+    
+    
+def update_json_file(version: str, info: list):
+    file_path = "version/version.json"  # Adjust the file path as needed
+    try:
+        # Read the existing JSON data
+        with open(file_path, "r") as json_file:
+            existing_data = json.load(json_file)
+
+        # Update the data
+        existing_data["version"] = version
+
+        # Split comma-separated strings into individual strings
+        for i, item in enumerate(info):
+            info[i] = item.split(',')
+
+        # Flatten the list of lists into a single list
+        existing_data["info"] = [item for sublist in info for item in sublist]
+
+        # Write the updated data back to the file
+        with open(file_path, "w") as json_file:
+            json.dump(existing_data, json_file, indent=4)
+
+        return {"message": f"JSON file '{file_path}' updated successfully"}
+    except Exception as e:
+        return {"error": str(e)}
+
+# Define the route to update the JSON file
+@router.post("/farmreel/update_version/")
+async def update_version_endpoint(version: str = Form(...), info: list = Form(...)):
+    result = update_json_file(version, info)
+    return result
