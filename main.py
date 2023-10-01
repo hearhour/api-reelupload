@@ -1,10 +1,10 @@
 from typing import Union
-
+from fastapi.staticfiles import StaticFiles
 from reelupload import license
 from fastapi import FastAPI
 from pydantic import BaseModel
 import uvicorn
-
+import os
 app = FastAPI()
 
 
@@ -28,6 +28,9 @@ app = FastAPI()
 # def update_item(item_id: int, item: Item):
 #     return {"item_name": item.name, "item_id": item_id}
 
+if not os.path.exists("images"):
+    os.makedirs("images")
+app.mount("/images", StaticFiles(directory="images"), name="images")
 
 app.include_router(license.router)
 
