@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter
+from fastapi import APIRouter, UploadFile, File
 from connection import get_mysql
 from connection import get_mysql_LD
 from connection import get_mysql_farmreel
@@ -243,7 +243,7 @@ def buykey(token: int, month: int, note: str = '', name: str = ''):
             Key = 'FARMREEL3' + result_str
         db = get_mysql_farmreel()
         cursor = db.cursor(dictionary=True)
-        insert_query = "INSERT INTO users (buykey, note, name) VALUES (%s, %s)"  # Add "note" field
+        insert_query = "INSERT INTO users (buykey, note, name) VALUES (%s, %s, %s)"  # Add "note" field
         cursor.execute(insert_query, (Key, note, name))  # Pass the "note" parameter
         db.commit()
         print('')
@@ -278,3 +278,11 @@ def farmreel_change(old_license, new_license):
         db.close()
         return 'Change fail'
 
+@router.post("/farmreel/uploadfile/")
+async def upload_file(file: UploadFile):
+    try:
+        with open('version/' + file.filename, "wb") as f:
+            f.write(file.file.read())
+        return {"message": "File uploaded successfully"}
+    except Exception as e:
+        return {"error": str(e)}
