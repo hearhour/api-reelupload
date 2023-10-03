@@ -188,6 +188,8 @@ def farmreel_insertkey(license, buykey):
             expire_date = now + timedelta(days=31)
         if 'FARMREEL3' in buykey:
             expire_date = now + timedelta(days=93)
+        if 'FREE' in buykey:
+            expire_date = now + timedelta(days=2)
         start_date = now.strftime('%Y-%m-%d')
         expire_date = expire_date.strftime('%Y-%m-%d')
 
@@ -243,6 +245,9 @@ def buykey(token: int, month: int, note: str = '', name: str = ''):
         elif month == 3:
             result_str = ''.join((random.choice('ABCDFGHJIKLMNOPQRSTUVWXYZ1234567890') for i in range(15)))
             Key = 'FARMREEL3' + result_str
+        elif month == 0:
+            result_str = ''.join((random.choice('ABCDFGHJIKLMNOPQRSTUVWXYZ1234567890') for i in range(15)))
+            Key = 'FREE' + result_str
         db = get_mysql_farmreel()
         cursor = db.cursor(dictionary=True)
         insert_query = "INSERT INTO users (buykey, note, name) VALUES (%s, %s, %s)"  # Add "note" field
