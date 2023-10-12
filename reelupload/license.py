@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, UploadFile, File, Form
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from connection import get_mysql
 from connection import get_mysql_LD
 from connection import get_mysql_farmreel
@@ -263,39 +263,83 @@ def buykey(token: int, month: int, note: str = '', name: str = ''):
 def farmreel_change(old_license, new_license):
     db = get_mysql_farmreel()
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT changekey FROM users WHERE license = %s", (old_license,))
+    cursor.execute("SELECT changekey, start_date, expire_date FROM users WHERE license = %s", (old_license,))
     checkbuykey = cursor.fetchone()
+    print()
 
+    if checkbuykey:
+        try:
+            start_date = checkbuykey['start_date']
+            expire_date = checkbuykey['expire_date']
+            print(start_date, expire_date)
+            
+            # Calculate the difference in days between expire_date and start_date
+            difference = (expire_date - start_date).days
+            print('difference', difference)
+
+            if difference <= 31:
+                if checkbuykey and checkbuykey['changekey'] < 2:
+                    new_changekey = checkbuykey['changekey'] + 1
+                    cursor.execute("UPDATE users SET changekey = %s WHERE license = %s", (new_changekey, old_license))
+                    db.commit()
+                    update_query = "UPDATE users SET license = %s WHERE license = %s"
+                    cursor.execute(update_query, (new_license, old_license))
+                    db.commit()
+                    db.close()
+                    return 'Change success'
+                elif checkbuykey['changekey'] >= 2:
+                    db.close()
+                    return 'Change limit exceeded'
+            else:
+                if checkbuykey and checkbuykey['changekey'] < 6:
+                    new_changekey = checkbuykey['changekey'] + 1
+                    cursor.execute("UPDATE users SET changekey = %s WHERE license = %s", (new_changekey, old_license))
+                    db.commit()
+                    update_query = "UPDATE users SET license = %s WHERE license = %s"
+                    cursor.execute(update_query, (new_license, old_license))
+                    db.commit()
+                    db.close()
+                    return 'Change success'
+                elif checkbuykey['changekey'] >= 6:
+                    db.close()
+                    return 'Change limit exceeded'
+        except Exception as e:
+            print("Error", e)
     if checkbuykey is None:
         db.close()
         return 'Unknown License'
-
-    if checkbuykey and checkbuykey['changekey'] < 2:
-        new_changekey = checkbuykey['changekey'] + 1
-        cursor.execute("UPDATE users SET changekey = %s WHERE license = %s", (new_changekey, old_license))
-        db.commit()
-        update_query = "UPDATE users SET license = %s WHERE license = %s"
-        cursor.execute(update_query, (new_license, old_license))
-        db.commit()
-        db.close()
-        return 'Change success'
-    elif checkbuykey['changekey'] >= 2:
-        db.close()
-        return 'Change limit exceeded'
-    else:
-        db.close()
-        return 'Change fail'
+    
 
 @router.post("/farmreel/uploadfile/")
-async def upload_file(file: UploadFile):
-    try:
-        with open('version/' + file.filename, "wb") as f:
-            f.write(file.file.read())
-        return {"message": "File uploaded successfully"}
-    except Exception as e:
-        return {"error": str(e)}
-    
-    
+async def upload_file(token:int ,file: UploadFile):
+    if token == 3991:
+        try:
+            with open('version/' + file.filename, "wb") as f:
+                f.write(file.file.read())
+            return {"message": "File uploaded successfully"}
+        except Exception as e:
+            return {"error": str(e)}
+    else:
+        return 'Token not valid'
+        
+@router.delete("/farmreel/deletefile/{filename}")
+async def delete_file(token: int, filename: str):
+    if token == 3991:
+        try:
+            # Specify the path to the file
+            file_path = 'version/' + filename
+
+            # Check if the file exists
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                return {"message": f"File {filename} deleted successfully"}
+            else:
+                raise HTTPException(status_code=404, detail="File not found")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))    
+    else:
+        return 'Token not valid'
+
 def update_json_file(version: str, info: list):
     file_path = "version/version.json"  # Adjust the file path as needed
     try:
@@ -321,6 +365,20 @@ def update_json_file(version: str, info: list):
     except Exception as e:
         return {"error": str(e)}
 
+
+@router.get("/farmreel/checkfile/")
+async def check_exe_files():
+    try:
+
+        files = os.listdir('version/')
+        exe_files = [file for file in files if file.endswith(".exe")]
+        if exe_files:
+            return {"message": f"{len(exe_files)} .exe file(s) found in the 'version/' directory", "files": exe_files}
+        else:
+            return {"message": "No .exe files found in the 'version/' directory"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 # Define the route to update the JSON file
 @router.post("/farmreel/update_version/")
 async def update_version_endpoint(version: str = Form(...), info: list = Form(...)):
