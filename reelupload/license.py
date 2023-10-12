@@ -11,6 +11,7 @@ import json
 import string
 import os
 
+
 router = APIRouter()
 
 def generate_random_text():
@@ -325,3 +326,5 @@ def update_json_file(version: str, info: list):
 async def update_version_endpoint(version: str = Form(...), info: list = Form(...)):
     result = update_json_file(version, info)
     return result
+
+
