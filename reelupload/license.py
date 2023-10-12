@@ -265,8 +265,6 @@ def farmreel_change(old_license, new_license):
     cursor = db.cursor(dictionary=True)
     cursor.execute("SELECT changekey, start_date, expire_date FROM users WHERE license = %s", (old_license,))
     checkbuykey = cursor.fetchone()
-    print()
-
     if checkbuykey:
         try:
             start_date = checkbuykey['start_date']
