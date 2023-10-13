@@ -26,25 +26,16 @@ app.add_middleware(
 )
 
 
-# async def check_origin(request: Request):
-#     if str(request.url) == "https://farmreel.mmoshop.me/farmreel/changekey":
-#         return True
-#     return False
-
-# @app.middleware("http")
-# async def apply_cors_to_specific_routes(request: Request, call_next):
-#     if await check_origin(request):
-#         response = await call_next(request)
-#         response.headers["Access-Control-Allow-Origin"] = "https://farmreel.mmoshop.me"
-#         response.headers["Access-Control-Allow-Methods"] = "*"
-#         response.headers["Access-Control-Allow-Headers"] = "*"
-#         return response
-#     else:
-#         raise HTTPException(
-#             status_code=403,
-#             detail="Forbidden",
-#         )
-
+@app.middleware("http")
+async def apply_cors_to_specific_route(request: Request, call_next):
+    if request.url.path == "/farmreel/changekey" and request.method == "GET":
+        response = await call_next(request)
+        response.headers["Access-Control-Allow-Origin"] = "https://farmreel.mmoshop.me"
+        response.headers["Access-Control-Allow-Methods"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+        return response
+    else:
+        return await call_next(request)
 
 if not os.path.exists("version"):
     os.makedirs("version")
