@@ -30,7 +30,11 @@ app.add_middleware(
 async def apply_cors_to_specific_route(request: Request, call_next):
     if request.url.path == "/farmreel/changekey" and request.method == "GET":
         response = await call_next(request)
-        response.headers["Access-Control-Allow-Origin"] = "https://farmreel.mmoshop.me"
+        request_origin = request.headers.get("origin")
+        if request_origin in ["https://farmreel.mmoshop.me", "http://139.180.147.46"]:
+            response.headers["Access-Control-Allow-Origin"] = request_origin
+        else:
+            response.headers["Access-Control-Allow-Origin"] = "null"  # Handle other origins as needed
         response.headers["Access-Control-Allow-Methods"] = "*"
         response.headers["Access-Control-Allow-Headers"] = "*"
         response.headers["Access-Control-Allow-Credentials"] = "true"  # Add this line if credentials are needed
@@ -39,6 +43,7 @@ async def apply_cors_to_specific_route(request: Request, call_next):
         response = await call_next(request)
         response.headers["Access-Control-Allow-Origin"] = "https://farmreel.mmoshop.me"  # Add this line to allow from this specific domain
         return response
+
 
 if not os.path.exists("version"):
     os.makedirs("version")
