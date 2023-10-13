@@ -33,9 +33,12 @@ async def apply_cors_to_specific_route(request: Request, call_next):
         response.headers["Access-Control-Allow-Origin"] = "https://farmreel.mmoshop.me"
         response.headers["Access-Control-Allow-Methods"] = "*"
         response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Allow-Credentials"] = "true"  # Add this line if credentials are needed
         return response
     else:
-        return await call_next(request)
+        response = await call_next(request)
+        response.headers["Access-Control-Allow-Origin"] = "https://farmreel.mmoshop.me"  # Add this line to allow from this specific domain
+        return response
 
 if not os.path.exists("version"):
     os.makedirs("version")
