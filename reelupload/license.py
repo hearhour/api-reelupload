@@ -182,6 +182,8 @@ def farmreel_user(license):
 
 @router.get("/farmreel/insertkey")
 def farmreel_insertkey(license, buykey):
+    if license == 'LDREEL7E8C8CA1038D04832460C68782EFF0D8':
+        return {"data": "Unknow License"}
     try:
         datenow = requests.get('https://mmoshop.me/datenow.php').text
         now = datetime.strptime(datenow, '%Y-%m-%d').date()
