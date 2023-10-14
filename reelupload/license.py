@@ -242,7 +242,7 @@ def update_expire(license):
         return None
 
 
-@router.get("/farmreel/buykey")
+@router.get("/farmreel/buykey", dependencies=[Depends(RateLimiter(times=2, seconds=60))])
 def buykey(token: int, month: int, note: str = '', name: str = ''):
     if token == 3991:
         if month == 1:
@@ -310,7 +310,7 @@ def farmreel_change(old_license, new_license):
         return {"detail": "Unknown License"}
 
 
-@router.post("/farmreel/uploadfile/")
+@router.post("/farmreel/uploadfile/", dependencies=[Depends(RateLimiter(times=2, seconds=60))])
 async def upload_file(token:int ,file: UploadFile):
     if token == 3991:
         try:
@@ -322,7 +322,7 @@ async def upload_file(token:int ,file: UploadFile):
     else:
         return 'Token not valid'
         
-@router.delete("/farmreel/deletefile/{filename}")
+@router.delete("/farmreel/deletefile/{filename}", dependencies=[Depends(RateLimiter(times=2, seconds=60))])
 async def delete_file(token: int, filename: str):
     if token == 3991:
         try:
