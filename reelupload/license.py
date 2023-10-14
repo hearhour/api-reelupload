@@ -10,6 +10,9 @@ import random
 import json
 import string
 import os
+from fastapi import Depends, FastAPI
+from fastapi_limiter import FastAPILimiter
+from fastapi_limiter.depends import RateLimiter
 
 
 router = APIRouter()
@@ -261,7 +264,7 @@ def buykey(token: int, month: int, note: str = '', name: str = ''):
     else:
         return 'Token not valid'
 
-@router.get("/farmreel/changekey")
+@router.get("/farmreel/changekey", dependencies=[Depends(RateLimiter(times=2, seconds=60))])
 def farmreel_change(old_license, new_license):
     db = get_mysql_farmreel()
     cursor = db.cursor(dictionary=True)
@@ -271,11 +274,7 @@ def farmreel_change(old_license, new_license):
         try:
             start_date = checkbuykey['start_date']
             expire_date = checkbuykey['expire_date']
-            print(start_date, expire_date)
-            
-            # Calculate the difference in days between expire_date and start_date
             difference = (expire_date - start_date).days
-            print('difference', difference)
 
             if difference <= 31:
                 if checkbuykey and checkbuykey['changekey'] < 2:
@@ -286,10 +285,11 @@ def farmreel_change(old_license, new_license):
                     cursor.execute(update_query, (new_license, old_license))
                     db.commit()
                     db.close()
-                    return 'Change success'
+                    return {"detail": "Change success"}
+                
                 elif checkbuykey['changekey'] >= 2:
                     db.close()
-                    return 'Change limit exceeded'
+                    return {"detail": "Change limit exceeded"}
             else:
                 if checkbuykey and checkbuykey['changekey'] < 6:
                     new_changekey = checkbuykey['changekey'] + 1
@@ -299,16 +299,16 @@ def farmreel_change(old_license, new_license):
                     cursor.execute(update_query, (new_license, old_license))
                     db.commit()
                     db.close()
-                    return 'Change success'
+                    return {"detail": "Change success"}
                 elif checkbuykey['changekey'] >= 6:
                     db.close()
-                    return 'Change limit exceeded'
+                    return {"detail": "Change limit exceeded"}
         except Exception as e:
             print("Error", e)
     if checkbuykey is None:
         db.close()
-        return 'Unknown License'
-    
+        return {"detail": "Unknown License"}
+
 
 @router.post("/farmreel/uploadfile/")
 async def upload_file(token:int ,file: UploadFile):
@@ -385,4 +385,8 @@ async def update_version_endpoint(version: str = Form(...), info: list = Form(..
     result = update_json_file(version, info)
     return result
 
+
+@router.get("/", dependencies=[Depends(RateLimiter(times=2, seconds=60))])
+async def index():
+    return {"msg": "Hello World"}
 

@@ -1,22 +1,19 @@
 from typing import Union
 from fastapi.staticfiles import StaticFiles
 from reelupload import license
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from pydantic import BaseModel
 import uvicorn
 import os
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi_limiter import FastAPILimiter
+from fastapi_limiter.depends import RateLimiter
+import redis.asyncio as aioredis
 
 app = FastAPI()
 
-# origins = [
-#     "http://localhost.tiangolo.com",
-#     "https://localhost.tiangolo.com",
-#     "http://localhost:3000",
-#     "http://localhost:8080",
-# ]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,24 +22,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.middleware("http")
-async def apply_cors_to_specific_route(request: Request, call_next):
-    if request.url.path == "/farmreel/changekey" and request.method == "GET":
-        response = await call_next(request)
-        request_origin = request.headers.get("origin")
-        if request_origin in ["https://farmreel.mmoshop.me", "http://139.180.147.46"]:
-            response.headers["Access-Control-Allow-Origin"] = request_origin
-        else:
-            response.headers["Access-Control-Allow-Origin"] = "null"  # Handle other origins as needed
-        response.headers["Access-Control-Allow-Methods"] = "*"
-        response.headers["Access-Control-Allow-Headers"] = "*"
-        response.headers["Access-Control-Allow-Credentials"] = "true"  # Add this line if credentials are needed
-        return response
-    else:
-        response = await call_next(request)
-        response.headers["Access-Control-Allow-Origin"] = "https://farmreel.mmoshop.me"  # Add this line to allow from this specific domain
-        return response
+@app.on_event("startup")
+async def startup():
+    redis_conn = aioredis.from_url("redis://localhost", encoding="utf-8", decode_responses=True)
+    await FastAPILimiter.init(redis_conn)
 
 
 if not os.path.exists("version"):
@@ -51,8 +34,5 @@ app.mount("/version", StaticFiles(directory="version"), name="version")
 
 app.include_router(license.router)
 
-
-
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
-
