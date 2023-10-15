@@ -54,6 +54,7 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
         client_host = websocket.client.host
     print('real IP :', client_host)
     print('md5 :', md5)
+    print(connected_clients)
 
     if client_host in connected_clients:
         await websocket.send_text("You are already connected")
