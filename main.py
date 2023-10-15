@@ -1,7 +1,7 @@
 from typing import Union
 from fastapi.staticfiles import StaticFiles
 from reelupload import license
-from fastapi import Depends, FastAPI, WebSocket, Header, WebSocketDisconnect
+from fastapi import Depends, FastAPI, WebSocket, Header
 from pydantic import BaseModel
 import uvicorn
 import os
@@ -52,18 +52,26 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
         client_host = client_host.split(',')[0]
     else:
         client_host = websocket.client.host
-    print('real IP:', client_host)
-
+    print('real IP :', client_host)
+    
+    time.sleep(8)
     try:
         while True:
             message = await websocket.receive_text()
+            if message == "verified":
+                await websocket.send_text("verified")
             if message == "closeModal":
                 await websocket.send_text("closeModal")  # Send a message to the client to close the modal
             else:
                 print(f"Received message from client: {message}")
-    except WebSocketDisconnect:
-        print('WebSocket connection closed')
 
+            
+    except:
+        print('connection remove')
+    # while True:
+    #     data = await websocket.receive_text()
+
+    #     await websocket.send_text(f"Message received: {data}")
     
     
 
