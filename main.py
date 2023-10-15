@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 import redis.asyncio as aioredis
+import time
 
 app = FastAPI()
 
@@ -53,12 +54,15 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
         client_host = websocket.client.host
     print('real IP :', client_host)
     
+    time.sleep(8)
+    
     await websocket.send_text("verified")
     while True:
         data = await websocket.receive_text()
 
         await websocket.send_text(f"Message received: {data}")
-
+    
+    
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
