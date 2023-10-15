@@ -1,7 +1,7 @@
 from typing import Union
 from fastapi.staticfiles import StaticFiles
 from reelupload import license
-from fastapi import Depends, FastAPI, WebSocket, Header
+from fastapi import Depends, FastAPI, WebSocket, Header, WebSocketDisconnect
 from pydantic import BaseModel
 import uvicorn
 import os
@@ -57,7 +57,11 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
     time.sleep(8)
     
     #await websocket.send_text("verified")
-    await websocket.send_text("vess")
+    try:
+        while True:
+            request = await websocket.receive_text()
+    except WebSocketDisconnect:
+        print("WebSocket Disconnected")
     # while True:
     #     data = await websocket.receive_text()
 
