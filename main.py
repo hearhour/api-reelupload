@@ -1,7 +1,7 @@
 from typing import Union
 from fastapi.staticfiles import StaticFiles
 from reelupload import license
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, WebSocket, Header
 from pydantic import BaseModel
 import uvicorn
 import os
@@ -14,6 +14,8 @@ import redis.asyncio as aioredis
 
 app = FastAPI()
 
+__WEBSOCKETS = []
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,10 +24,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+redis_conn = aioredis.from_url("redis://localhost", encoding="utf-8", decode_responses=True)
+
 @app.on_event("startup")
 async def startup():
-    redis_conn = aioredis.from_url("redis://localhost", encoding="utf-8", decode_responses=True)
+ 
     await FastAPILimiter.init(redis_conn)
+    print(redis_conn)
 
 
 if not os.path.exists("version"):
@@ -33,6 +38,21 @@ if not os.path.exists("version"):
 app.mount("/version", StaticFiles(directory="version"), name="version")
 
 app.include_router(license.router)
+
+
+async def get_client_ip(websocket: WebSocket = Depends()):
+    return 
+
+@app.websocket("/payment")
+async def websocket_endpoint(websocket: WebSocket, md5: str):
+    await websocket.accept()
+    # client_ip = websocket.client.host
+    # await redis_conn.set(f"client_ip:{client_ip}", client_ip, expire=3600)
+    # print(client_ip)
+
+@app.get('/')
+def index(real_ip: str = Header(None, alias='X-Real-IP')):
+    return real_ip
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
