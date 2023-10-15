@@ -50,7 +50,7 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
     # await redis_conn.set(f"client_ip:{client_ip}", client_ip, expire=3600)
     # print(client_ip)
 
-@app.get('/')
+@app.get('/ttttt')
 def index(real_ip: str = Header(None, alias='X-Real-IP')):
     return real_ip
 
