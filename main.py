@@ -44,14 +44,12 @@ async def get_client_ip(websocket: WebSocket = Depends()):
     return 
 
 @app.websocket("/payment")
-async def websocket_endpoint(websocket: WebSocket, md5: str, request: Request):
+async def websocket_endpoint(websocket: WebSocket, md5: str):
     await websocket.accept()
-    client_host = request.headers.get("X-Forwarded-For")
-    if client_host:
-        client_host = client_host.split(',')[0]
-    else:
-        client_host = request.client.host
-    return "true"
+    while True:
+        data = await websocket.receive_text()
+        # Process the data received from the client
+        await websocket.send_text(f"Message received: {data}")
     
     
     # client_ip = websocket.client.host
