@@ -14,7 +14,7 @@ import redis.asyncio as aioredis
 import time
 
 app = FastAPI()
-
+connected_clients = set()
 __WEBSOCKETS = []
 
 app.add_middleware(
@@ -56,17 +56,23 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
     print('md5 :', md5)
     
     #await websocket.send_text("verified")
+    if client_host in connected_clients:
+            await websocket.send_text("You are already connected")
+            await websocket.close()
+            return
+    else:
+        connected_clients.add(client_host)
+
     try:
         while True:
-            meesage = await websocket.receive_text()
-            print(meesage)
-            await websocket.send_text(meesage)
+            message = await websocket.receive_text()
+            print(message)
+            await websocket.send_text(message)
     except WebSocketDisconnect:
         print("WebSocket Disconnected")
+    finally:
+        connected_clients.remove(client_host)
         
-        
-    time.sleep(8)
-    
 
     
     
