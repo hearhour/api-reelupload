@@ -54,8 +54,6 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
         client_host = websocket.client.host
     print('real IP :', client_host)
     
-    time.sleep(8)
-    
     #await websocket.send_text("verified")
     try:
         while True:
