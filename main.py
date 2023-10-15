@@ -59,8 +59,13 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
         while True:
             meesage = await websocket.receive_text()
             print(meesage)
+            await websocket.send_text(meesage)
     except WebSocketDisconnect:
         print("WebSocket Disconnected")
+        
+        
+    time.sleep(8)
+    
 
     
     
