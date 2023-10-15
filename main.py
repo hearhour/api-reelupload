@@ -51,24 +51,13 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
         client_host = client_host.split(',')[0]
     else:
         client_host = websocket.client.host
+    print('real IP :', client_host)
     await websocket.send_text(f"Client Host: {client_host}")
     while True:
         data = await websocket.receive_text()
-        # Process the data received from the client
-        await websocket.send_text(f"Message received: {data}")
-    
-    # client_ip = websocket.client.host
-    # await redis_conn.set(f"client_ip:{client_ip}", client_ip, expire=3600)
-    # print(client_ip)
 
-@app.get("/vvvv")
-async def get_client_real_ip(request: Request):
-    client_host = request.headers.get("X-Forwarded-For")
-    if client_host:
-        client_host = client_host.split(',')[0]
-    else:
-        client_host = request.client.host
-    return {"client_host": client_host}
+        await websocket.send_text(f"Message received: {data}")
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
