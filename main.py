@@ -51,9 +51,9 @@ async def websocket_endpoint(websocket: WebSocket, md5: str, real_ip: str = Head
     # await redis_conn.set(f"client_ip:{client_ip}", client_ip, expire=3600)
     # print(client_ip)
 
-@app.get("/sss")
+@app.get("/ccc")
 async def get_client_real_ip(request: Request):
-    client_host = request.headers.get("X-Real-IP")
+    client_host = request.client.host
     return {"client_host": client_host}
 
 if __name__ == "__main__":
