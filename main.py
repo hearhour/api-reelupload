@@ -52,9 +52,9 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
         client_host = client_host.split(',')[0]
     else:
         client_host = websocket.client.host
-    print('real IP :', client_host)
-    print('md5 :', md5)
-    print(connected_clients)
+    # print('real IP :', client_host)
+    # print('md5 :', md5)
+    # print(connected_clients)
 
     if client_host in connected_clients:
         await websocket.send_text("closeModal")
@@ -72,10 +72,8 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
         print("WebSocket Disconnected")
     finally:
         connected_clients.remove(client_host)
-        
 
-    
-    
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
