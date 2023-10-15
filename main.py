@@ -51,7 +51,9 @@ async def websocket_endpoint(websocket: WebSocket, md5: str, request: Request):
         client_host = client_host.split(',')[0]
     else:
         client_host = request.client.host
-    await websocket.send_text(f"Client Host: {client_host}")
+    return "true"
+    
+    
     # client_ip = websocket.client.host
     # await redis_conn.set(f"client_ip:{client_ip}", client_ip, expire=3600)
     # print(client_ip)
