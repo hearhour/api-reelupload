@@ -57,13 +57,11 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
     #await websocket.send_text("verified")
     try:
         while True:
-            request = await websocket.receive_text()
+            meesage = await websocket.receive_text()
+            print(meesage)
     except WebSocketDisconnect:
         print("WebSocket Disconnected")
-    # while True:
-    #     data = await websocket.receive_text()
 
-    #     await websocket.send_text(f"Message received: {data}")
     
     
 
