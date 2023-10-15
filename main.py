@@ -55,19 +55,8 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
     print('real IP :', client_host)
     
     time.sleep(8)
-    try:
-        while True:
-            message = await websocket.receive_text()
-            if message == "verified":
-                await websocket.send_text("verified")
-            if message == "closeModal":
-                await websocket.send_text("closeModal")  # Send a message to the client to close the modal
-            else:
-                print(f"Received message from client: {message}")
-
-            
-    except:
-        print('connection remove')
+    
+    await websocket.send_text("verified")
     # while True:
     #     data = await websocket.receive_text()
 
