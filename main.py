@@ -52,11 +52,8 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
     else:
         client_host = websocket.client.host
     print('real IP :', client_host)
-    await websocket.send_text(f"Client Host: {client_host}")
-    while True:
-        data = await websocket.receive_text()
 
-        await websocket.send_text(f"Message received: {data}")
+        
 
 
 if __name__ == "__main__":
