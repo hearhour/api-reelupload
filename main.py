@@ -55,8 +55,11 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
     print('real IP :', client_host)
     
     time.sleep(8)
+    try:
     
-    await websocket.send_text("verified")
+        await websocket.send_text("verified")
+    except:
+        print('connection remove')
     # while True:
     #     data = await websocket.receive_text()
 
