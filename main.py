@@ -56,7 +56,8 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
     
     time.sleep(8)
     
-    await websocket.send_text("verified")
+    #await websocket.send_text("verified")
+    await websocket.send_text("vess")
     # while True:
     #     data = await websocket.receive_text()
 
