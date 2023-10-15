@@ -53,6 +53,7 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
     else:
         client_host = websocket.client.host
     print('real IP :', client_host)
+    print('md5 :', md5)
     
     #await websocket.send_text("verified")
     try:
