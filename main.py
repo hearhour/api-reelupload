@@ -44,9 +44,14 @@ async def get_client_ip(websocket: WebSocket = Depends()):
     return 
 
 @app.websocket("/payment")
-async def websocket_endpoint(websocket: WebSocket, md5: str, real_ip: str = Header(None, alias='X-Real-IP')):
+async def websocket_endpoint(websocket: WebSocket, md5: str, request: Request):
     await websocket.accept()
-    print('real_ip', real_ip)
+    client_host = request.headers.get("X-Forwarded-For")
+    if client_host:
+        client_host = client_host.split(',')[0]
+    else:
+        client_host = request.client.host
+    return {"client_host": client_host}
     # client_ip = websocket.client.host
     # await redis_conn.set(f"client_ip:{client_ip}", client_ip, expire=3600)
     # print(client_ip)
