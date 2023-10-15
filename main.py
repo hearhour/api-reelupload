@@ -57,7 +57,7 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
     print(connected_clients)
 
     if client_host in connected_clients:
-        await websocket.send_text("You are already connected")
+        await websocket.send_text("closeModal")
         await websocket.close()
         return
     else:
