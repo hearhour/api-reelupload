@@ -379,7 +379,7 @@ async def check_exe_files():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@router.get("/farmreel/checggg/")
+@router.get("/farmreel/version/json")
 async def check_exe_files():
     try:
         files = os.listdir('version/')
@@ -403,7 +403,7 @@ async def update_version_endpoint(version: str = Form(...), info: list = Form(..
     return result
 
 
-@router.get("/", dependencies=[Depends(RateLimiter(times=2, seconds=60))])
+@router.get("/")
 async def index():
     return {"msg": "Hello World"}
 

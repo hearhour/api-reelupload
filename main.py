@@ -26,6 +26,9 @@ app.add_middleware(
 )
 
 
+if not os.path.exists("version"):
+    os.makedirs("version")
+app.mount("/version", StaticFiles(directory="version"), name="version")
 
 @app.on_event("startup")
 async def startup():
@@ -33,10 +36,6 @@ async def startup():
     await FastAPILimiter.init(redis_conn)
 
 
-
-if not os.path.exists("version"):
-    os.makedirs("version")
-app.mount("/version", StaticFiles(directory="version"), name="version")
 
 app.include_router(license.router)
 
