@@ -37,9 +37,6 @@ async def startup():
 
 
 
-app.include_router(license.router)
-
-
 async def get_client_ip(websocket: WebSocket = Depends()):
     return 
 
@@ -72,7 +69,7 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
     finally:
         connected_clients.remove(client_host)
 
-
+app.include_router(license.router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
