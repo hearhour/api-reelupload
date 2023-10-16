@@ -379,6 +379,23 @@ async def check_exe_files():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+@router.get("/farmreel/checggg/")
+async def check_exe_files():
+    try:
+        files = os.listdir('version/')
+        exe_files = [file for file in files if file.endswith(".json")]
+        if exe_files:
+            data = []
+            for file in exe_files:
+                with open(os.path.join('version', file), 'r') as f:
+                    content = json.load(f)
+                    data.append(content)
+            return {"message": f"{len(exe_files)} .json file(s) found in the 'version/' directory", "data": data}
+        else:
+            return {"message": "No .json files found in the 'version/' directory"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 # Define the route to update the JSON file
 @router.post("/farmreel/update_version/")
 async def update_version_endpoint(version: str = Form(...), info: list = Form(...)):

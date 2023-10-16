@@ -25,13 +25,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-redis_conn = aioredis.from_url("redis://localhost", encoding="utf-8", decode_responses=True)
+
 
 @app.on_event("startup")
 async def startup():
- 
+    redis_conn = aioredis.from_url("redis://localhost", encoding="utf-8", decode_responses=True)
     await FastAPILimiter.init(redis_conn)
-    print(redis_conn)
+
 
 
 if not os.path.exists("version"):
