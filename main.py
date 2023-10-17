@@ -15,6 +15,7 @@ import time
 import json
 import requests
 import asyncio
+import threading
 
 
 from datetime import datetime
@@ -63,7 +64,11 @@ class Payment(Base):
     ip = Column(String(50))
     buykey = Column(Text)
     
+    
 
+    
+    
+    
 def generate_key(amount):
     match float(amount):
         case 10.0: 

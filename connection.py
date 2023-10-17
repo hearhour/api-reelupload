@@ -4,10 +4,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://{0}:{1}@{2}:{3}/{4}".format(
-            "farmreel", "RIsnb&j!!.mH", "184.168.98.120", "3306", "farmreel"
-        )
-# SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
+from datetime import datetime
+from sqlalchemy import Column, String, Float, Integer, Text, DateTime
+import threading
+import asyncio
+# SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://{0}:{1}@{2}:{3}/{4}".format(
+#             "farmreel", "RIsnb&j!!.mH", "184.168.98.120", "3306", "farmreel"
+#         )
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres.wrdumfbkrlhexfqdlkep:73dFGXMpsrtZJuT5@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL
@@ -17,6 +21,19 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
+# class Payment(Base):
+#     __tablename__ = "payment"
+#     __table_args__ = {'extend_existing': True} 
+#     id = Column(Integer, primary_key=True)
+#     hash = Column(Text)
+#     md5 = Column(Text)
+#     date = Column(DateTime)
+#     amount = Column(Float)
+#     ip = Column(String(50))
+#     buykey = Column(Text)
+
+    
+# Base.metadata.create_all(bind=engine)
 
 def get_mysql():
     mydb = None
