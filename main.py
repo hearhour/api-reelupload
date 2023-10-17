@@ -16,7 +16,10 @@ import json
 import requests
 import asyncio
 import threading
+from contextlib import contextmanager
+from connection import get_mysql_farmreel
 
+import random
 
 from datetime import datetime
 from sqlalchemy import Column, String, Float, Integer, Text, DateTime
@@ -66,72 +69,102 @@ class Payment(Base):
     
     
 
-    
-    
+def buykey(month: int, note: str = '', name: str = ''):
+    try:
+        if month == 1:
+            result_str = ''.join((random.choice('ABCDFGHJIKLMNOPQRSTUVWXYZ1234567890') for i in range(15)))
+            Key = 'FARMREEL1' + result_str
+        elif month == 3:
+            result_str = ''.join((random.choice('ABCDFGHJIKLMNOPQRSTUVWXYZ1234567890') for i in range(15)))
+            Key = 'FARMREEL3' + result_str
+        elif month == 0:
+            result_str = ''.join((random.choice('ABCDFGHJIKLMNOPQRSTUVWXYZ1234567890') for i in range(15)))
+            Key = 'FREE' + result_str
+        db = get_mysql_farmreel()
+        cursor = db.cursor(dictionary=True)
+        insert_query = "INSERT INTO users (buykey, note, name) VALUES (%s, %s, %s)"  # Add "note" field
+        cursor.execute(insert_query, (Key, note, name))  # Pass the "note" parameter
+        db.commit()
+        return {"Buykey": Key}
+    except:
+        return None
     
 def generate_key(amount):
     match float(amount):
         case 10.0: 
-            response = requests.get("http://139.180.147.46/farmreel/buykey?token=3991&month=1")
-            if response.status_code != 200: return None
-            return response.json()["Buykey"]
+            response = buykey(1)
+            if response is None : return None
+            return response["Buykey"]
         case 30.0: 
-            response = requests.get("http://139.180.147.46/farmreel/buykey?token=3991&month=3")
-            if response.status_code != 200: return None
-            return response.json()["Buykey"]
+            response = buykey(1)
+            if response is None : return None
+            return response["Buykey"]
         case _: return None
     
 
 
+ERROR_CODES = {1, 3}
+ACCOUNT_ID = "heang_lyhour@aclb"
+
+
+@contextmanager
+def session_scope(session):
+    try:
+        yield session
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        print(f"Error: {e}")
+    finally:
+        session.close()
+
+
 def verify_payment(md5: str, ip: str):
     headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + __BAKONG_TOKEN
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + __BAKONG_TOKEN
     }
 
     payload = json.dumps({"md5": md5})
-    response = requests.request("POST", __BAKONG_URL, headers=headers, data=payload)
+    response = requests.post(__BAKONG_URL, headers=headers, data=payload)
     if response.status_code != 200:
         return None
-    response = response.json()
-   
-    if "errorCode" in response:
-        if response["errorCode"] in [1, 3]:
-            return None
-    
-    hash = response["data"]["hash"]
-    _db = SessionLocal()
-    
-    try:
-        prev = _db.query(Payment).filter(Payment.hash == hash).one_or_none()
-        if prev is not None:
-            return None
-        
-        if response["data"]["toAccountId"] != "heang_lyhour@aclb":
-            return None
-        
-        amount = response["data"]["amount"]
 
-        buykey = generate_key(amount)
-        
-        if not buykey: return None
-        
-        _db.add(
-            Payment(
-                hash=hash,
-                md5=md5,
-                date=datetime.now(),
-                amount=amount,
-                ip=ip,
-                buykey=buykey
+    response = response.json()
+    if "errorCode" in response and response["errorCode"] in ERROR_CODES:
+        return None
+
+    try:
+        hash = response["data"]["hash"]
+        with session_scope(SessionLocal()) as _db:
+            prev = _db.query(Payment).filter(Payment.hash == hash).one_or_none()
+            if prev is not None:
+                return None
+
+            if response["data"]["toAccountId"] != ACCOUNT_ID:
+                return None
+
+            amount = response["data"]["amount"]
+            buykey = generate_key(amount)
+
+            if not buykey:
+                return None
+
+            _db.add(
+                Payment(
+                    hash=hash,
+                    md5=md5,
+                    date=datetime.now(),
+                    amount=amount,
+                    ip=ip,
+                    buykey=buykey
+                )
             )
-        )
-        _db.commit()
-    except:
-        print("Error")
-    finally:
-        _db.close()
-    return buykey
+            return buykey
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    
 
 @app.websocket("/payment")
 async def websocket_endpoint(websocket: WebSocket, md5: str):
