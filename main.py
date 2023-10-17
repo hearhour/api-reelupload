@@ -65,18 +65,16 @@ class Payment(Base):
     
 
 def generate_key(amount):
-    if float(amount) == 10.0:
-        response = requests.get("http://139.180.147.46/farmreel/buykey?token=3991&month=1")
-        if response.status_code != 200:
-            return None
-        return response.json()["Buykey"]
-    elif float(amount) == 30.0:
-        response = requests.get("http://139.180.147.46/farmreel/buykey?token=3991&month=3")
-        if response.status_code != 200:
-            return None
-        return response.json()["Buykey"]
-    else:
-        return None
+    match float(amount):
+        case 10.0: 
+            response = requests.get("http://139.180.147.46/farmreel/buykey?token=3991&month=1")
+            if response.status_code != 200: return None
+            return response.json()["Buykey"]
+        case 30.0: 
+            response = requests.get("http://139.180.147.46/farmreel/buykey?token=3991&month=3")
+            if response.status_code != 200: return None
+            return response.json()["Buykey"]
+        case _: return None
     
 
 
@@ -160,6 +158,8 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
                     text_received = True
                 else:
                     buykey = verify_payment(md5=md5, ip=client_host)
+                    print(md5)
+                    print("Buykey", buykey)
                     if buykey is not None:
                         await websocket.send_text("Buykey: {}".format(buykey))
                         await websocket.send_text("closeModal")
@@ -169,12 +169,14 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
                     text_received = True
             except asyncio.TimeoutError:
                 if not text_received:
+                    print("No text received within 5 seconds. Executing default action.")
                     buykey = verify_payment(md5=md5, ip=client_host)
+                    print(md5)
+                    print("Buykey", buykey)
                     if buykey is not None:
                         await websocket.send_text("Buykey: {}".format(buykey))
                         await websocket.send_text("closeModal")
                         await websocket.close()
-                        print('MD5 :', md5 , " Buykey : ", buykey)
                         break
 
     except WebSocketDisconnect:
