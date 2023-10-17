@@ -196,8 +196,6 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
                     text_received = True
                 else:
                     buykey = verify_payment(md5=md5, ip=client_host)
-                    print(md5)
-                    print("Buykey", buykey)
                     if buykey is not None:
                         await websocket.send_text("Buykey: {}".format(buykey))
                         await websocket.send_text("closeModal")
@@ -209,12 +207,11 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
                 if not text_received:
                     print("No text received within 5 seconds. Executing default action.")
                     buykey = verify_payment(md5=md5, ip=client_host)
-                    print(md5)
-                    print("Buykey", buykey)
                     if buykey is not None:
                         await websocket.send_text("Buykey: {}".format(buykey))
                         await websocket.send_text("closeModal")
                         await websocket.close()
+                        print('MD5 :', md5 , " Buykey : ", buykey)
                         break
 
     except WebSocketDisconnect:
