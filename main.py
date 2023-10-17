@@ -65,16 +65,18 @@ class Payment(Base):
     
 
 def generate_key(amount):
-    match float(amount):
-        case 10.0: 
-            response = requests.get("http://139.180.147.46/farmreel/buykey?token=3991&month=1")
-            if response.status_code != 200: return None
-            return response.json()["Buykey"]
-        case 30.0: 
-            response = requests.get("http://139.180.147.46/farmreel/buykey?token=3991&month=3")
-            if response.status_code != 200: return None
-            return response.json()["Buykey"]
-        case _: return None
+    if float(amount) == 10.0:
+        response = requests.get("http://139.180.147.46/farmreel/buykey?token=3991&month=1")
+        if response.status_code != 200:
+            return None
+        return response.json()["Buykey"]
+    elif float(amount) == 30.0:
+        response = requests.get("http://139.180.147.46/farmreel/buykey?token=3991&month=3")
+        if response.status_code != 200:
+            return None
+        return response.json()["Buykey"]
+    else:
+        return None
     
 
 
