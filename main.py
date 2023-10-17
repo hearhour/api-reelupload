@@ -205,7 +205,7 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
                     text_received = True
             except asyncio.TimeoutError:
                 if not text_received:
-                    print("No text received within 5 seconds. Executing default action.")
+                    print("IP Connection : ", client_host)
                     buykey = verify_payment(md5=md5, ip=client_host)
                     if buykey is not None:
                         await websocket.send_text("Buykey: {}".format(buykey))
