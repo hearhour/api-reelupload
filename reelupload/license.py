@@ -407,9 +407,9 @@ async def update_version_endpoint(version: str = Form(...), info: list = Form(..
 @router.get("/farmreel/download_zip")
 async def download_zip_file():
     try:
-        # Assuming the 'setup.zip' file is in the same directory as your script
+        # Adjusting the path to the 'setup.zip' file based on the directory structure
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        path_to_zip_file = os.path.join(script_dir, "setup.zip")
+        path_to_zip_file = os.path.join(script_dir, "version", "setup.zip")
 
         # Check if the file exists
         if not os.path.exists(path_to_zip_file):
