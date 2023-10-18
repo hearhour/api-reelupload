@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Response, status
 from connection import get_mysql
 from connection import get_mysql_LD
 from connection import get_mysql_farmreel
@@ -13,6 +13,7 @@ import os
 from fastapi import Depends, FastAPI
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
+from fastapi.responses import FileResponse
 
 
 router = APIRouter()
@@ -401,6 +402,26 @@ async def check_exe_files():
 async def update_version_endpoint(version: str = Form(...), info: list = Form(...)):
     result = update_json_file(version, info)
     return result
+
+
+@router.get("/farmreel/download_zip")
+async def download_zip_file():
+    try:
+        # Assuming you have the path to the .zip file, replace 'path_to_your_zip_file' with the actual path.
+        path_to_zip_file = 'version/setup.zip' 
+
+        # Check if the file exists
+        if not os.path.exists(path_to_zip_file):
+            return Response(content="File not found", status_code=status.HTTP_404_NOT_FOUND)
+
+        # Set the appropriate MIME type for .zip
+        mime_type = 'application/zip'
+
+        # Return the file to be downloaded
+        return FileResponse(path_to_zip_file, media_type=mime_type, filename="setup.zip")
+
+    except Exception as e:
+        return Response(content=str(e), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @router.get("/")
