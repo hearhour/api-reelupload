@@ -421,6 +421,8 @@ async def download_zip_file():
         # Return the file to be downloaded
         return FileResponse(path_to_zip_file, media_type=mime_type, filename="setup.zip")
 
+    except FileNotFoundError as e:
+        return Response(content="File not found", status_code=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response(content=str(e), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
