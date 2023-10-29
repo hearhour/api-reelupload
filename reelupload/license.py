@@ -425,7 +425,25 @@ async def download_zip_file():
         return Response(content="File not found", status_code=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response(content=str(e), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+@router.get("/api")
+def read_root(tracking):
+    print(tracking)
+    return {
+        'Product_Name' : 'Flipper Zero',
+        'price' : '160.50 USD Our free (included)',
+        'location' : 'Toulkrok, Pnhom Penh',
+        'kg' : '3 KG',
+        'History' : [
+            {'process' : 'Package collection',
+            'location' : 'Chroy Chva',},
+            {'process' : 'Package arrived at center',
+            'location' : 'Toul songkae',},
+            {'process' : 'Delivery scan',
+            'location' : 'Ressey Keo',},
+            {'process' : 'Package delivery',
+            'location' : 'Toul krok',}
+        ]
+    }
 
 @router.get("/")
 async def index():
