@@ -428,6 +428,18 @@ async def download_zip_file():
 @router.get("/api")
 def read_root(tracking):
     print(tracking)
+    if tracking == '0123456789':
+        return {
+        'Product_Name' : 'Online Shop',
+        'price' : '10.50 USD Our free (included)',
+        'location' : 'Psa Tmey, Pnhom Penh',
+        'kg' : '5 KG',
+        'History' : [
+            {'process' : 'Package collection',
+            'location' : 'Psa Tmey',
+            'time' : '07:00 AM'}
+        ]
+    }
     return {
         'Product_Name' : 'Flipper Zero',
         'price' : '160.50 USD Our free (included)',
