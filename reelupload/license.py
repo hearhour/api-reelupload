@@ -449,7 +449,10 @@ def read_root(tracking):
         'History' : [
             {'process' : 'Package collection',
             'location' : 'Psa Tmey',
-            'time' : '07:00 AM'}
+            'time' : '07:00 AM'},
+            {'process' : 'Package arrived at center',
+            'location' : 'Toul songkae',
+            'time' : '09:00 AM'},
         ]
     }
     return {
