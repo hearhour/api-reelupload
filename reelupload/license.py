@@ -435,13 +435,17 @@ def read_root(tracking):
         'kg' : '3 KG',
         'History' : [
             {'process' : 'Package collection',
-            'location' : 'Chroy Chva',},
+            'location' : 'Chroy Chva',
+            'time' : '07:00 AM'},
             {'process' : 'Package arrived at center',
-            'location' : 'Toul songkae',},
+            'location' : 'Toul songkae',
+            'time' : '09:00 AM'},
             {'process' : 'Delivery scan',
-            'location' : 'Ressey Keo',},
+            'location' : 'Ressey Keo',
+            'time' : '12:00 AM'},
             {'process' : 'Package delivery',
-            'location' : 'Toul krok',}
+            'location' : 'Toul krok',
+            'time' : '02:00 PM'}
         ]
     }
 
