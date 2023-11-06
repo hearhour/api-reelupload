@@ -28,7 +28,7 @@ app = FastAPI()
 connected_clients = set()
 __WEBSOCKETS = []
 __BAKONG_URL = "https://api-bakong.nbc.gov.kh/v1/check_transaction_by_md5"
-__BAKONG_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2OTg4MjI0NjAsImlhdCI6MTY5MDc4NzI2MCwiZGF0YSI6eyJpZCI6IjMyNzc5MDhjYWVhNTQzMyJ9fQ.X80yVzrIjq6L73KaDPk26WYPCCUe87YxX9GXWWixbjY'
+__BAKONG_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MDczMjc0NzQsImlhdCI6MTY5OTI5MjI3NCwiZGF0YSI6eyJpZCI6IjMyNzc5MDhjYWVhNTQzMyJ9fQ.J0yATlhyfsfPHP_hUV8dp3zBpQwWiBXxiaXFgwYIFno'
 running = False
 
         
@@ -165,6 +165,11 @@ def verify_payment(md5: str, ip: str):
         print(f"Error: {e}")
         return None
     
+    
+@app.get("/testssssssss")
+def tessstssssssssssss(data):
+        print(data)
+        return data
 
 @app.websocket("/payment")
 async def websocket_endpoint(websocket: WebSocket, md5: str):
@@ -187,6 +192,7 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
         connected_clients.add(client_host)
 
     md5 = str(md5).replace("\"", "")
+    print(md5)
     try:
         text_received = False
         while True:
