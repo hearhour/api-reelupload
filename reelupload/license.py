@@ -425,6 +425,7 @@ async def download_zip_file():
         return Response(content="File not found", status_code=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response(content=str(e), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 @router.get("/api")
 def read_root(tracking):
     print(tracking)

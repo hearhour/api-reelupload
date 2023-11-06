@@ -66,8 +66,15 @@ class Payment(Base):
     amount = Column(Float)
     ip = Column(String(50))
     buykey = Column(Text)
+    telegram = Column(Text)
     
-    
+
+class Telegram(Base):
+    __tablename__ = "telgram"
+    __table_args__ = {'extend_existing': True} 
+    id = Column(Integer, primary_key=True)
+    link = Column(Text)
+    join = Column(Text)
 
 def buykey(month: int, note: str = '', name: str = ''):
     try:
@@ -96,7 +103,7 @@ def generate_key(amount):
             if response is None : return None
             return response["Buykey"]
         case 30.0: 
-            response = buykey(1)
+            response = buykey(3)
             if response is None : return None
             return response["Buykey"]
         case _: return None
@@ -117,6 +124,19 @@ def session_scope(session):
         print(f"Error: {e}")
     finally:
         session.close()
+        
+
+def get_link_telegram():
+    with session_scope(SessionLocal()) as _db:
+        prev = _db.query(Telegram).filter(Telegram.join == 'True').one_or_none()
+        if prev:
+            print(prev.link)
+            prev.join = 'False'
+            _db.commit()
+            return prev.link
+        else:
+            return "No Data"
+
 
 
 def verify_payment(md5: str, ip: str):
@@ -146,6 +166,7 @@ def verify_payment(md5: str, ip: str):
 
             amount = response["data"]["amount"]
             buykey = generate_key(amount)
+            telegram_join = get_link_telegram()
 
             if not buykey:
                 return None
@@ -157,19 +178,18 @@ def verify_payment(md5: str, ip: str):
                     date=datetime.now(),
                     amount=amount,
                     ip=ip,
-                    buykey=buykey
+                    buykey=buykey,
+                    telegram=telegram_join,
+                    
                 )
             )
-            return buykey
+            return {'buykey' : buykey, 'telgram' : telegram_join}
     except Exception as e:
         print(f"Error: {e}")
         return None
     
     
-@app.get("/testssssssss")
-def tessstssssssssssss(data):
-        print(data)
-        return data
+
 
 @app.websocket("/payment")
 async def websocket_endpoint(websocket: WebSocket, md5: str):

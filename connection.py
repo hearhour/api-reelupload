@@ -31,8 +31,17 @@ Base = declarative_base()
 #     amount = Column(Float)
 #     ip = Column(String(50))
 #     buykey = Column(Text)
+#     telegram = Column(Text)
 
-    
+
+# class Telegram(Base):
+#     __tablename__ = "telgram"
+#     __table_args__ = {'extend_existing': True} 
+#     id = Column(Integer, primary_key=True)
+#     link = Column(Text)
+#     join = Column(Text)
+
+
 # Base.metadata.create_all(bind=engine)
 
 def get_mysql():
