@@ -128,7 +128,7 @@ def session_scope(session):
 
 def get_link_telegram():
     with session_scope(SessionLocal()) as _db:
-        prev = _db.query(Telegram).filter(Telegram.join == 'True').one_or_none()
+        prev = _db.query(Telegram).filter(Telegram.join == 'True').first()
         if prev:
             print(prev.link)
             prev.join = 'False'
