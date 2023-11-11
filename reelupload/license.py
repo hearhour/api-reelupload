@@ -311,7 +311,7 @@ def farmreel_change(old_license, new_license):
         return {"detail": "Unknown License"}
 
 
-@router.post("/farmreel/uploadfile/", dependencies=[Depends(RateLimiter(times=2, seconds=60))])
+@router.post("/farmreel/uploadfile/")
 async def upload_file(token:int ,file: UploadFile):
     if token == 3991:
         try:
