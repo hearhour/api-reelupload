@@ -501,7 +501,6 @@ async def index():
 @router.get("/tiktok/allvideos")
 def getVideosByUsername(username : str, max_cursor= None):
     dd = requests.get(f'https://www.tiktok.com/{username}').text
-    print(dd)
     try:
         authorSecId = dd.split('"authorSecId":"')[1].split('"')[0]
     except:
@@ -540,7 +539,7 @@ def getVideosByUsername(username : str, max_cursor= None):
         cover = video['video']['ai_dynamic_cover']['url_list'][-1]
         title = video['desc']
         i += 1
-        print({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
+        #print({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
         all_videos.append({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
     try:
         max_cursor = response['max_cursor']
