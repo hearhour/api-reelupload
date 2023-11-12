@@ -209,8 +209,10 @@ def farmreel_user(license: str = Depends(api_key_header)):
         rows = cursor.fetchone()
         cursor.close()
         return rows
-    except:
+    except Exception as e:
+        print(f"Error in farmreel_user: {e}")
         return None
+
 
 
 @router.get("/farmreel/insertkey")
