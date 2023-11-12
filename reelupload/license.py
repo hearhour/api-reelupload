@@ -15,6 +15,11 @@ from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 from fastapi.responses import FileResponse
 
+from fastapi import APIRouter, Depends, HTTPException, Security
+from fastapi.security import APIKeyHeader
+import hmac
+import hashlib
+import base64
 
 router = APIRouter()
 
@@ -175,7 +180,7 @@ def status_ld():
 @router.get("/farmreel/user")
 def farmreel_user(license):
     try:
-        db = db = get_mysql_farmreel()
+        db = get_mysql_farmreel()
         cursor = db.cursor(dictionary=True)
         cursor.execute("SELECT * FROM users WHERE license = %s", (license,))
         rows = cursor.fetchone()
@@ -183,6 +188,30 @@ def farmreel_user(license):
         return rows
     except:
         return None
+    
+SECRET_KEY = "FARMREEL1GSW3NJJFCW0B225"
+
+def verify_hmac_signature(data: str, signature: str):
+    expected_signature = base64.b64encode(hmac.new(SECRET_KEY.encode('utf-8'), data.encode('utf-8'), hashlib.sha512).digest()).decode('utf-8')
+    return hmac.compare_digest(expected_signature, signature)
+
+api_key_header = APIKeyHeader(name="Authorization", auto_error=False)
+@router.get("/farmreelv2/user")
+def farmreel_user(license: str = Depends(api_key_header)):
+    try:
+        # Verify HMAC signature
+        if not verify_hmac_signature(license, license.split(" ")[1]):
+            raise HTTPException(status_code=403, detail="Invalid HMAC signature")
+
+        db = get_mysql_farmreel()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM users WHERE license = %s", (license,))
+        rows = cursor.fetchone()
+        cursor.close()
+        return rows
+    except:
+        return None
+
 
 @router.get("/farmreel/insertkey")
 def farmreel_insertkey(license, buykey):
