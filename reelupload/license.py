@@ -502,7 +502,10 @@ async def index():
 def getVideosByUsername(username : str, max_cursor= None):
     dd = requests.get(f'https://www.tiktok.com/{username}').text
     print(dd)
-    authorSecId = dd.split('"authorSecId":"')[1].split('"')[0]
+    try:
+        authorSecId = dd.split('"authorSecId":"')[1].split('"')[0]
+    except:
+        authorSecId = dd.split('"secUid":"')[1].split('"')[0]
     #global i
     i = 0
     if max_cursor is None:
