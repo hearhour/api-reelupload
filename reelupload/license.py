@@ -15,20 +15,12 @@ from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 from fastapi.responses import FileResponse
 
-from fastapi import APIRouter, Depends, HTTPException, Security
-from fastapi.security import APIKeyHeader
-import hmac
-import hashlib
-import base64
-import traceback 
-
 router = APIRouter()
 
 def generate_random_text():
     letters = string.ascii_lowercase
     random_text = ''.join(random.choice(letters) for _ in range(8)) + ''.join(random.choice(string.digits) for _ in range(5))
     return random_text
-
 
 @router.get("/status")
 def status():
@@ -171,10 +163,10 @@ def ld_insertkey(license: str):
     except Exception as e:
         return {"message": f"An error occurred: {e}"}
     
-
+    
 @router.get("/status_ld")
 def status_ld():
-    return {'status' : 'farmreel'}
+    return {'status' : 'farmreelv2'}
 
 
 #Farm Reel
@@ -190,34 +182,20 @@ def farmreel_user(license):
     except:
         return None
     
-SECRET_KEY = "FARMREEL1GSW3NJJFCW0B225"
-
-def verify_hmac_signature(data: str, signature: str):
-    expected_signature = base64.b64encode(hmac.new(SECRET_KEY.encode('utf-8'), data.encode('utf-8'), hashlib.sha512).digest()).decode('utf-8')
-    return hmac.compare_digest(expected_signature, signature)
-
-api_key_header = APIKeyHeader(name="Authorization", auto_error=False)
 
 @router.get("/farmreelv2/user")
-def farmreel_user(authorization: str = Depends(api_key_header)):
+def farmreel_user(license: str, head : str):
     try:
-        # Extract the token from the Authorization header
-        _, token = authorization.split(" ")
-        
-        # Verify HMAC signature
-        if not verify_hmac_signature(token, token):
-            raise HTTPException(status_code=403, detail="Invalid HMAC signature")
-
-        db = get_mysql_farmreel()
-        cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users WHERE license = %s", (token,))
-        rows = cursor.fetchone()
-        cursor.close()
-        return rows
+        if head == 'apireel':
+            db = get_mysql_farmreel()
+            cursor = db.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM users WHERE license = %s", (license,))
+            rows = cursor.fetchone()
+            cursor.close()
+            return rows
+        else:
+            return None
     except Exception as e:
-        # Print the type and full traceback of the exception
-        print(f"Error in farmreel_user: {type(e)}")
-        traceback.print_exc()  # Print the full traceback
         return None
 
 
