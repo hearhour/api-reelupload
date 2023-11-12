@@ -498,50 +498,50 @@ async def index():
     return {"msg": "Hello World"}
 
 
-# @router.get("/tiktok/allvideos")
-# def getVideosByUsername(username : str, max_cursor= None):
-#     dd = requests.get(f'https://www.tiktok.com/{username}').text
-#     print(dd)
-#     authorSecId = dd.split('"authorSecId":"')[1].split('"')[0]
-#     #global i
-#     i = 0
-#     if max_cursor is None:
-#         max_cursor = '0'
-#     headers = {
-#         'host': 'api22-core-c-alisg.tiktokv.com',
-#         'sdk-version': '2',
-#         'x-ss-req-ticket': '1699790586124',
-#         'passport-sdk-version': '19',
-#         'x-tt-dm-status': 'login=0;ct=1;rt=6',
-#         'x-vc-bdturing-sdk-version': '2.3.4.i18n',
-#         'x-tt-store-region': 'kh',
-#         'x-tt-store-region-src': 'did',
-#         'user-agent': 'com.zhiliaoapp.musically/2023201050 (Linux; U; Android 12; en_US; SM-G9500; Build/V417IR;tt-ok/3.12.13.4-tiktok)',
-#         'x-ladon': 'Pr1sNnemlziIwGGw0vOP/IRuy4mg1vFJgJqpaF1CjHXcJ9Vw',
-#     }
+@router.get("/tiktok/allvideos")
+def getVideosByUsername(username : str, max_cursor= None):
+    dd = requests.get(f'https://www.tiktok.com/{username}').text
+    print(dd)
+    authorSecId = dd.split('"authorSecId":"')[1].split('"')[0]
+    #global i
+    i = 0
+    if max_cursor is None:
+        max_cursor = '0'
+    headers = {
+        'host': 'api22-core-c-alisg.tiktokv.com',
+        'sdk-version': '2',
+        'x-ss-req-ticket': '1699790586124',
+        'passport-sdk-version': '19',
+        'x-tt-dm-status': 'login=0;ct=1;rt=6',
+        'x-vc-bdturing-sdk-version': '2.3.4.i18n',
+        'x-tt-store-region': 'kh',
+        'x-tt-store-region-src': 'did',
+        'user-agent': 'com.zhiliaoapp.musically/2023201050 (Linux; U; Android 12; en_US; SM-G9500; Build/V417IR;tt-ok/3.12.13.4-tiktok)',
+        'x-ladon': 'Pr1sNnemlziIwGGw0vOP/IRuy4mg1vFJgJqpaF1CjHXcJ9Vw',
+    }
 
-#     response = requests.get(
-#         'https://api22-core-c-alisg.tiktokv.com/aweme/v1/aweme/post/?source=0&user_avatar_shrink=144_144&video_cover_shrink=372_495&'
-#         f'max_cursor={max_cursor}&'
-#         f'sec_user_id={authorSecId}'
-#         '&count=20&sort_type=0&iid=7300544687662728965&device_id=7300543548435318277&ac=wifi&channel=googleplay&aid=1233&app_name=musical_ly&version_code=320105&version_name=32.1.5&device_platform=android&os=android&ab_version=32.1.5&ssmix=a&device_type=SM-G9500&device_brand=Samsung&language=en&os_api=32&os_version=12',
-#         headers=headers).json()
+    response = requests.get(
+        'https://api22-core-c-alisg.tiktokv.com/aweme/v1/aweme/post/?source=0&user_avatar_shrink=144_144&video_cover_shrink=372_495&'
+        f'max_cursor={max_cursor}&'
+        f'sec_user_id={authorSecId}'
+        '&count=20&sort_type=0&iid=7300544687662728965&device_id=7300543548435318277&ac=wifi&channel=googleplay&aid=1233&app_name=musical_ly&version_code=320105&version_name=32.1.5&device_platform=android&os=android&ab_version=32.1.5&ssmix=a&device_type=SM-G9500&device_brand=Samsung&language=en&os_api=32&os_version=12',
+        headers=headers).json()
 
 
-#     videos = response['aweme_list']
-#     # print(videos[0]['video']['ai_dynamic_cover']['url_list'][-1])
-#     # print(videos)
-#     all_videos = []
-#     for video in videos:
-#         data = video['video']['play_addr']['url_list']
-#         cover = video['video']['ai_dynamic_cover']['url_list'][-1]
-#         title = video['desc']
-#         i += 1
-#         print({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
-#         all_videos.append({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
-#     try:
-#         max_cursor = response['max_cursor']
-#         return {'videos' : all_videos, 'max_cursor':max_cursor}
-#         # print(max_cursor)
-#     except:
-#         pass
+    videos = response['aweme_list']
+    # print(videos[0]['video']['ai_dynamic_cover']['url_list'][-1])
+    # print(videos)
+    all_videos = []
+    for video in videos:
+        data = video['video']['play_addr']['url_list']
+        cover = video['video']['ai_dynamic_cover']['url_list'][-1]
+        title = video['desc']
+        i += 1
+        print({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
+        all_videos.append({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
+    try:
+        max_cursor = response['max_cursor']
+        return {'videos' : all_videos, 'max_cursor':max_cursor}
+        # print(max_cursor)
+    except:
+        pass
