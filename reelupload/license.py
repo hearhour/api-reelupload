@@ -171,7 +171,7 @@ def ld_insertkey(license: str):
     except Exception as e:
         return {"message": f"An error occurred: {e}"}
     
-    
+
 @router.get("/status_ld")
 def status_ld():
     return {'status' : 'farmreel'}
