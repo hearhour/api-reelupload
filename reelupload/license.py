@@ -191,21 +191,26 @@ def farmreel_user(license):
         return None
     
 SECRET_KEY = "FARMREEL1GSW3NJJFCW0B225"
+
 def verify_hmac_signature(data: str, signature: str):
     expected_signature = base64.b64encode(hmac.new(SECRET_KEY.encode('utf-8'), data.encode('utf-8'), hashlib.sha512).digest()).decode('utf-8')
     return hmac.compare_digest(expected_signature, signature)
 
 api_key_header = APIKeyHeader(name="Authorization", auto_error=False)
+
 @router.get("/farmreelv2/user")
-def farmreel_user(license: str = Depends(api_key_header)):
+def farmreel_user(authorization: str = Depends(api_key_header)):
     try:
+        # Extract the token from the Authorization header
+        _, token = authorization.split(" ")
+        
         # Verify HMAC signature
-        if not verify_hmac_signature(license, license.split(" ")[1]):
+        if not verify_hmac_signature(token, token):
             raise HTTPException(status_code=403, detail="Invalid HMAC signature")
 
         db = get_mysql_farmreel()
         cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM users WHERE license = %s", (license,))
+        cursor.execute("SELECT * FROM users WHERE license = %s", (token,))
         rows = cursor.fetchone()
         cursor.close()
         return rows
