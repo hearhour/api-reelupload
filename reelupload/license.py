@@ -529,21 +529,23 @@ def getVideosByUsername(username : str, max_cursor= None):
         '&count=20&sort_type=0&iid=7300544687662728965&device_id=7300543548435318277&ac=wifi&channel=googleplay&aid=1233&app_name=musical_ly&version_code=320105&version_name=32.1.5&device_platform=android&os=android&ab_version=32.1.5&ssmix=a&device_type=SM-G9500&device_brand=Samsung&language=en&os_api=32&os_version=12',
         headers=headers).json()
 
-
-    videos = response['aweme_list']
-    # print(videos[0]['video']['ai_dynamic_cover']['url_list'][-1])
-    # print(videos)
-    all_videos = []
-    for video in videos:
-        data = video['video']['play_addr']['url_list']
-        cover = video['video']['ai_dynamic_cover']['url_list'][-1]
-        title = video['desc']
-        i += 1
-        #print({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
-        all_videos.append({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
     try:
-        max_cursor = response['max_cursor']
-        return {'videos' : all_videos, 'max_cursor':max_cursor}
-        # print(max_cursor)
+        videos = response['aweme_list']
+        # print(videos[0]['video']['ai_dynamic_cover']['url_list'][-1])
+        # print(videos)
+        all_videos = []
+        for video in videos:
+            data = video['video']['play_addr']['url_list']
+            cover = video['video']['ai_dynamic_cover']['url_list'][-1]
+            title = video['desc']
+            i += 1
+            #print({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
+            all_videos.append({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
+        try:
+            max_cursor = response['max_cursor']
+            return {'videos' : all_videos, 'max_cursor':max_cursor}
+            # print(max_cursor)
+        except:
+            pass
     except:
-        pass
+        return {'videos' : None, 'max_cursor': None}
