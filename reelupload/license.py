@@ -556,7 +556,7 @@ def getVideosByUsername(username : str, max_cursor= None):
     
     
     
-@router.get("/tiktok/url")
+@router.get("/proxy")
 async def proxy(url: str = Query(...)):
     try:
         print(f"Request received for URL: {url}")
