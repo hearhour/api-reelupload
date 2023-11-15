@@ -185,8 +185,6 @@ def farmreel_user(license):
 
 @router.get("/farmreelv2/user")
 def farmreel_user(license: str, head : str):
-    if license == 'LDREEL7E8C8CA1038D04832460C68782EFF0D8' or 'LDREEL42F3F79AE32FF17DB6DF283C94F39BF2':
-        return {"data": "Unknow License"}
     try:
         if head == 'apireel':
             db = get_mysql_farmreel()
@@ -204,8 +202,6 @@ def farmreel_user(license: str, head : str):
 
 @router.get("/farmreel/insertkey")
 def farmreel_insertkey(license, buykey):
-    if license == 'LDREEL7E8C8CA1038D04832460C68782EFF0D8' or 'LDREEL42F3F79AE32FF17DB6DF283C94F39BF2':
-        return {"data": "Unknow License"}
     try:
         datenow = requests.get('https://mmoshop.me/datenow.php').text
         now = datetime.strptime(datenow, '%Y-%m-%d').date()
