@@ -14,6 +14,10 @@ from fastapi import Depends, FastAPI
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 from fastapi.responses import FileResponse
+from fastapi.responses import StreamingResponse
+import httpx
+import io
+from fastapi import FastAPI, HTTPException, Query
 
 router = APIRouter()
 
@@ -549,3 +553,17 @@ def getVideosByUsername(username : str, max_cursor= None):
             pass
     except:
         return {'videos' : None, 'max_cursor': None}
+    
+    
+    
+@router.get("/tiktok/url")
+async def proxy(url: str = Query(...)):
+    try:
+        print(f"Request received for URL: {url}")
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+            response.raise_for_status()
+            return StreamingResponse(io.BytesIO(response.content), media_type="video/mp4")
+    except httpx.HTTPError as e:
+        print(f"Error: {str(e)}")
+        raise HTTPException(status_code=e.response.status_code, detail=str(e))
