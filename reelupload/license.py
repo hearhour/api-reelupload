@@ -16,6 +16,8 @@ from fastapi_limiter.depends import RateLimiter
 from fastapi.responses import FileResponse
 from fastapi.responses import StreamingResponse
 from PIL import Image, ImageDraw, ImageFont
+
+
 import random
 import os
 import io
@@ -590,3 +592,16 @@ async def generate_image_api(text: str, size: tuple = (1000, 1000)):
 
     # Return the image as a streaming response
     return StreamingResponse(io.BytesIO(img_byte_array.read()), media_type="image/png")
+
+
+def download_video(url):
+    response = requests.get(url, stream=True)
+
+    if response.status_code == 200:
+        return StreamingResponse(io.BytesIO(response.content), media_type="video/mp4")
+    else:
+        return StreamingResponse(io.BytesIO(b"Failed to download video"), media_type="text/plain")
+
+@router.get("/get_video")
+async def get_video(video_url):
+    return download_video(video_url)
