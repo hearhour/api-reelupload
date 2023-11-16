@@ -508,7 +508,10 @@ def getVideosByUsername(username : str, max_cursor= None):
     try:
         authorSecId = dd.split('"authorSecId":"')[1].split('"')[0]
     except:
-        authorSecId = dd.split('"secUid":"')[1].split('"')[0]
+        try:
+            authorSecId = dd.split('"secUid":"')[1].split('"')[0]
+        except:
+            return None
     #global i
     i = 0
     if max_cursor is None:
@@ -542,9 +545,10 @@ def getVideosByUsername(username : str, max_cursor= None):
             data = video['video']['play_addr']['url_list']
             cover = video['video']['ai_dynamic_cover']['url_list'][-1]
             title = video['desc']
+            play_count = video['statistics']['play_count']
             i += 1
             #print({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
-            all_videos.append({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
+            all_videos.append({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title, 'play_count':play_count})
         try:
             max_cursor = response['max_cursor']
             return {'videos' : all_videos, 'max_cursor':max_cursor}
