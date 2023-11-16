@@ -563,12 +563,14 @@ async def generate_image_api(text: str, size: tuple = (1000, 1000)):
     font_color = (255, 255, 255)
     font_path = 'BostonBold.otf'
     font = ImageFont.truetype(font_path, font_size)
+    text_bbox = draw.textbbox((0, 0), text, font=font)
+    text_width = text_bbox[2] - text_bbox[0]
+    text_height = text_bbox[3] - text_bbox[1]
 
-    # Calculate the position to center the text
-    text_width, text_height = draw.textsize(text, font)
+
+
     x = (size[0] - text_width) // 2
     y_text = (size[1] - text_height) // 2
-
     logo_files = [f for f in os.listdir(logo_folder) if f.endswith('.png')]
 
     if logo_files:
