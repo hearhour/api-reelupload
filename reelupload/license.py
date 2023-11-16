@@ -14,6 +14,11 @@ from fastapi import Depends, FastAPI
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 from fastapi.responses import FileResponse
+from fastapi.responses import StreamingResponse
+from PIL import Image, ImageDraw, ImageFont
+import random
+import os
+import io
 
 router = APIRouter()
 
@@ -197,7 +202,6 @@ def farmreel_user(license: str, head : str):
             return None
     except Exception as e:
         return None
-
 
 
 @router.get("/farmreel/insertkey")
@@ -547,3 +551,38 @@ def getVideosByUsername(username : str, max_cursor= None):
             pass
     except:
         return {'videos' : None, 'max_cursor': None}
+    
+    
+@router.get("/generate_profile")
+async def generate_image_api(text: str, size: tuple = (1000, 1000)):
+    logo_folder = r'logo'
+    image = Image.new("RGB", size, "white")
+    draw = ImageDraw.Draw(image)
+    bg_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+    draw.rectangle([0, 0, size[0], size[1]], fill=bg_color)
+    font_size = 100
+    font_color = (255, 255, 255)
+    font_path = 'BostonBold.otf'
+    font = ImageFont.truetype(font_path, font_size)
+    text_width, text_height = draw.textsize(text, font)
+    x = (size[0] - text_width) // 2
+    y_text = (size[1] - text_height) // 2
+    logo_files = [f for f in os.listdir(logo_folder) if f.endswith('.png')]
+
+    if logo_files:
+        logo_file = random.choice(logo_files)
+        logo_path = os.path.join(logo_folder, logo_file)
+        logo = Image.open(logo_path).convert('RGBA')
+        x_logo = (size[0] - logo.width) // 2
+        y_logo = y_text - logo.height - 10
+        image.paste(logo, (x_logo, y_logo), logo)
+
+    draw.text((x, y_text), text, font=font, fill=font_color)
+
+    # Create an in-memory buffer
+    img_byte_array = io.BytesIO()
+    image.save(img_byte_array, format="PNG")
+    img_byte_array.seek(0)
+
+    # Return the image as a streaming response
+    return StreamingResponse(io.BytesIO(img_byte_array.read()), media_type="image/png")
