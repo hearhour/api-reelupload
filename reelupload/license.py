@@ -582,6 +582,4 @@ async def generate_image_api(text: str, size: tuple = (1000, 1000)):
     img_byte_array = io.BytesIO()
     image.save(img_byte_array, format="PNG")
     img_byte_array.seek(0)
-
-    # Return the image as a streaming response
     return StreamingResponse(io.BytesIO(img_byte_array.read()), media_type="image/png")
