@@ -554,7 +554,7 @@ def getVideosByUsername(username : str, max_cursor= None):
     
 @router.get("/generate_profile")
 async def generate_image_api(text: str, size: tuple = (1000, 1000)):
-    logo_folder = r'logo'
+    logo_folder = 'logo'
     image = Image.new("RGB", size, "white")
     draw = ImageDraw.Draw(image)
     bg_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
@@ -563,9 +563,12 @@ async def generate_image_api(text: str, size: tuple = (1000, 1000)):
     font_color = (255, 255, 255)
     font_path = 'BostonBold.otf'
     font = ImageFont.truetype(font_path, font_size)
+
+    # Calculate the position to center the text
     text_width, text_height = draw.textsize(text, font)
     x = (size[0] - text_width) // 2
     y_text = (size[1] - text_height) // 2
+
     logo_files = [f for f in os.listdir(logo_folder) if f.endswith('.png')]
 
     if logo_files:
@@ -582,4 +585,6 @@ async def generate_image_api(text: str, size: tuple = (1000, 1000)):
     img_byte_array = io.BytesIO()
     image.save(img_byte_array, format="PNG")
     img_byte_array.seek(0)
+
+    # Return the image as a streaming response
     return StreamingResponse(io.BytesIO(img_byte_array.read()), media_type="image/png")
