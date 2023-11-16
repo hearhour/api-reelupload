@@ -552,7 +552,6 @@ def getVideosByUsername(username : str, max_cursor= None):
     except:
         return {'videos' : None, 'max_cursor': None}
     
-    
 @router.get("/generate_profile")
 async def generate_image_api(text: str, size: tuple = (1000, 1000)):
     logo_folder = r'logo'
