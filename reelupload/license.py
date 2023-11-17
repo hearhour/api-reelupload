@@ -503,8 +503,9 @@ async def index():
     return {"msg": "Hello World"}
 
 
-def get_custom_cors_middleware():
+def get_custom_cors_middleware(app):
     return CORSMiddleware(
+     app=app,
         allow_origins=["https://farmtiktok.vercel.app"],
         allow_credentials=True,
         allow_methods=["*"],
