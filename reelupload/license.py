@@ -502,19 +502,10 @@ def read_root(tracking):
 async def index():
     return {"msg": "Hello World"}
 
-def get_custom_cors_middleware():
-    return CORSMiddleware(
-        allow_origins=["https://farmtiktok.vercel.app"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-
-custom_cors = get_custom_cors_middleware()
 
 
 
-@router.get("/tiktok/allvideos", dependencies=[Depends(custom_cors)])
+@router.get("/tiktok/allvideos")
 def getVideosByUsername(username : str, max_cursor= None):
     dd = requests.get(f'https://www.tiktok.com/{username}').text
     try:
@@ -619,6 +610,15 @@ def download_video(url):
         return StreamingResponse(io.BytesIO(b"Failed to download video"), media_type="text/plain")
 
 
+def get_custom_cors_middleware():
+    return CORSMiddleware(
+        allow_origins=["https://farmtiktok.vercel.app"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+custom_cors = get_custom_cors_middleware()
 
 @router.get("/get_video")
 async def get_video(video_url):
