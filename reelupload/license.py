@@ -510,9 +510,10 @@ def getVideosByUsername(username : str, request: Request, max_cursor= None):
     
     client_host = request.client.host
     
-    if str(client_host) != "https://tiktok.mmoshop.me/": return {}
     print(vars(request))
     print("CLIENT HOST", client_host)
+    if str(client_host) != "https://tiktok.mmoshop.me/": return {}
+
     dd = requests.get(f'https://www.tiktok.com/{username}').text
     try:
         authorSecId = dd.split('"authorSecId":"')[1].split('"')[0]
