@@ -17,6 +17,7 @@ from fastapi.responses import FileResponse
 from fastapi.responses import StreamingResponse
 from PIL import Image, ImageDraw, ImageFont
 from fastapi.middleware.cors import CORSMiddleware
+import psutil
 
 import random
 import os
@@ -617,16 +618,21 @@ async def get_video(video_url, request: Request):
     if str(client_host) != "https://tiktok.mmoshop.me": return {}
     return download_video(video_url)
 
+def check_memory():
+    available_memory = psutil.virtual_memory().available
+    return available_memory
 
-@router.get("/getvideos/tiktok")
+@router.get("/getvideosaa/tiktok")
 def getVideosByUsernames(username : str, request: Request, max_cursor= None):
     
     client_host = request.headers.get("origin")
     # print(vars(request))
     # print("CLIENT HOST", client_host)
     if str(client_host) != "https://tiktok.mmoshop.me": return {'videos' : None, 'max_cursor': None}
+    
 
     dd = requests.get(f'https://www.tiktok.com/{username}').text
+    
     try:
         authorSecId = dd.split('"authorSecId":"')[1].split('"')[0]
     except:
