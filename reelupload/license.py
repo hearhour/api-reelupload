@@ -508,8 +508,7 @@ async def index():
 @router.get("/tiktok/allvideos")
 def getVideosByUsername(username : str, request: Request, max_cursor= None):
     
-    client_host = request.client.host
-    
+    client_host = request.headers.get("origin")
     print(vars(request))
     print("CLIENT HOST", client_host)
     if str(client_host) != "https://tiktok.mmoshop.me/": return {'videos' : None, 'max_cursor': None}
