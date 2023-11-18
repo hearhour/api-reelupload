@@ -624,7 +624,7 @@ async def get_video(video_url, request: Request):
     print('available_memory :', available_memory)
     
     # Set a threshold for available memory (adjust as needed)
-    memory_threshold = 200 * 1024 * 1024  # 100 MB
+    memory_threshold = 100 * 1024 * 1024  # 100 MB
 
     if available_memory < memory_threshold:
         # If memory is running low, skip the request
@@ -709,7 +709,7 @@ def getVideosByUsernames(username : str, request: Request, max_cursor= None):
     print('available_memory :', available_memory)
     
     # Set a threshold for available memory (adjust as needed)
-    memory_threshold = 200 * 1024 * 1024  # 100 MB
+    memory_threshold = 100 * 1024 * 1024  # 100 MB
 
     if available_memory < memory_threshold:
         # If memory is running low, skip the request
