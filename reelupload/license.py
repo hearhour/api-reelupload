@@ -613,18 +613,18 @@ def download_video(url):
 
 @router.get("/get_video")
 async def get_video(video_url, request: Request):
-    # client_host = request.headers.get("origin")
-    # if str(client_host) != "https://tiktok.mmoshop.me": return {}
+    client_host = request.headers.get("origin")
+    if str(client_host) != "https://tiktok.mmoshop.me": return {}
     return download_video(video_url)
 
 
 @router.get("/getvideos/tiktok")
 def getVideosByUsernames(username : str, request: Request, max_cursor= None):
     
-    # client_host = request.headers.get("origin")
-    # # print(vars(request))
-    # # print("CLIENT HOST", client_host)
-    # if str(client_host) != "https://tiktok.mmoshop.me": return {'videos' : None, 'max_cursor': None}
+    client_host = request.headers.get("origin")
+    # print(vars(request))
+    # print("CLIENT HOST", client_host)
+    if str(client_host) != "https://tiktok.mmoshop.me": return {'videos' : None, 'max_cursor': None}
 
     dd = requests.get(f'https://www.tiktok.com/{username}').text
     try:
