@@ -612,7 +612,9 @@ def download_video(url):
 
 
 @router.get("/get_video")
-async def get_video(video_url):
+async def get_video(video_url, request: Request):
+    client_host = request.headers.get("origin")
+    if str(client_host) != "https://tiktok.mmoshop.me": return {}
     return download_video(video_url)
 
 
