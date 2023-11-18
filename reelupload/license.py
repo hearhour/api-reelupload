@@ -616,7 +616,7 @@ async def get_video(video_url):
     return download_video(video_url)
 
 
-@router.get("getvideos/tiktok")
+@router.get("/getvideos/tiktok")
 def getVideosByUsernames(username : str, request: Request, max_cursor= None):
     
     client_host = request.headers.get("origin")
