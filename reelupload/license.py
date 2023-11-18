@@ -503,8 +503,6 @@ async def index():
     return {"msg": "Hello World"}
 
 
-
-
 @router.get("/tiktok/allvideos")
 def getVideosByUsername(username : str, max_cursor= None):
 
@@ -619,7 +617,7 @@ async def get_video(video_url):
 
 
 @router.get("getvideos/tiktok")
-def getVideosByUsername(username : str, request: Request, max_cursor= None):
+def getVideosByUsernames(username : str, request: Request, max_cursor= None):
     
     client_host = request.headers.get("origin")
     # print(vars(request))
