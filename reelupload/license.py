@@ -601,9 +601,13 @@ async def generate_image_api(text: str, size: tuple = (1000, 1000)):
     # Return the image as a streaming response
     return StreamingResponse(io.BytesIO(img_byte_array.read()), media_type="image/png")
 
+def check_memory():
+    available_memory = psutil.virtual_memory().available
+    return available_memory
 
 def download_video(url):
     response = requests.get(url, stream=True)
+
 
     if response.status_code == 200:
         return StreamingResponse(io.BytesIO(response.content), media_type="video/mp4")
@@ -616,11 +620,84 @@ def download_video(url):
 async def get_video(video_url, request: Request):
     client_host = request.headers.get("origin")
     if str(client_host) != "https://tiktok.mmoshop.me": return {}
+    available_memory = check_memory()
+    print('available_memory :', available_memory)
+    
+    # Set a threshold for available memory (adjust as needed)
+    memory_threshold = 200 * 1024 * 1024  # 100 MB
+
+    if available_memory < memory_threshold:
+        # If memory is running low, skip the request
+        return {}
     return download_video(video_url)
 
-def check_memory():
-    available_memory = psutil.virtual_memory().available
-    return available_memory
+
+
+# @router.get("/getvideosaa/tiktok")
+# def getVideosByUsernames(username : str, request: Request, max_cursor= None):
+    
+#     client_host = request.headers.get("origin")
+#     # print(vars(request))
+#     # print("CLIENT HOST", client_host)
+#     if str(client_host) != "https://tiktok.mmoshop.me": return {'videos' : None, 'max_cursor': None}
+    
+
+#     dd = requests.get(f'https://www.tiktok.com/{username}').text
+    
+#     try:
+#         authorSecId = dd.split('"authorSecId":"')[1].split('"')[0]
+#     except:
+#         try:
+#             authorSecId = dd.split('"secUid":"')[1].split('"')[0]
+#         except:
+#             return None
+#     #global i
+#     i = 0
+#     if max_cursor is None:
+#         max_cursor = '0'
+#     headers = {
+#         'host': 'api22-core-c-alisg.tiktokv.com',
+#         'sdk-version': '2',
+#         'x-ss-req-ticket': '1699790586124',
+#         'passport-sdk-version': '19',
+#         'x-tt-dm-status': 'login=0;ct=1;rt=6',
+#         'x-vc-bdturing-sdk-version': '2.3.4.i18n',
+#         'x-tt-store-region': 'kh',
+#         'x-tt-store-region-src': 'did',
+#         'user-agent': 'com.zhiliaoapp.musically/2023201050 (Linux; U; Android 12; en_US; SM-G9500; Build/V417IR;tt-ok/3.12.13.4-tiktok)',
+#         'x-ladon': 'Pr1sNnemlziIwGGw0vOP/IRuy4mg1vFJgJqpaF1CjHXcJ9Vw',
+#     }
+
+#     response = requests.get(
+#         'https://api22-core-c-alisg.tiktokv.com/aweme/v1/aweme/post/?source=0&user_avatar_shrink=144_144&video_cover_shrink=372_495&'
+#         f'max_cursor={max_cursor}&'
+#         f'sec_user_id={authorSecId}'
+#         '&count=20&sort_type=0&iid=7300544687662728965&device_id=7300543548435318277&ac=wifi&channel=googleplay&aid=1233&app_name=musical_ly&version_code=320105&version_name=32.1.5&device_platform=android&os=android&ab_version=32.1.5&ssmix=a&device_type=SM-G9500&device_brand=Samsung&language=en&os_api=32&os_version=12',
+#         headers=headers).json()
+
+#     try:
+#         videos = response['aweme_list']
+#         # print(videos[0]['video']['ai_dynamic_cover']['url_list'][-1])
+#         # print(videos)
+#         all_videos = []
+#         for video in videos:
+#             data = video['video']['play_addr']['url_list']
+#             cover = video['video']['ai_dynamic_cover']['url_list'][-1]
+#             title = video['desc']
+#             play_count = video['statistics']['play_count']
+#             i += 1
+#             #print({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title})
+#             all_videos.append({'row': i ,'url_video' : data[-1], 'cover' : cover, 'title' : title, 'play_count':play_count})
+#         try:
+#             max_cursor = response['max_cursor']
+#             return {'videos' : all_videos, 'max_cursor':max_cursor}
+#             # print(max_cursor)
+#         except:
+#             pass
+#     except:
+#         return {'videos' : None, 'max_cursor': None}
+
+
 
 @router.get("/getvideosaa/tiktok")
 def getVideosByUsernames(username : str, request: Request, max_cursor= None):
@@ -629,7 +706,16 @@ def getVideosByUsernames(username : str, request: Request, max_cursor= None):
     # print(vars(request))
     # print("CLIENT HOST", client_host)
     if str(client_host) != "https://tiktok.mmoshop.me": return {'videos' : None, 'max_cursor': None}
+    available_memory = check_memory()
+    print('available_memory :', available_memory)
     
+    # Set a threshold for available memory (adjust as needed)
+    memory_threshold = 200 * 1024 * 1024  # 100 MB
+
+    if available_memory < memory_threshold:
+        # If memory is running low, skip the request
+        return {'videos': None, 'max_cursor': None}
+        
 
     dd = requests.get(f'https://www.tiktok.com/{username}').text
     
@@ -685,3 +771,6 @@ def getVideosByUsernames(username : str, request: Request, max_cursor= None):
             pass
     except:
         return {'videos' : None, 'max_cursor': None}
+
+
+
