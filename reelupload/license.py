@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Response, status
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Response, status, Request
 from connection import get_mysql
 from connection import get_mysql_LD
 from connection import get_mysql_farmreel
@@ -506,7 +506,13 @@ async def index():
 
 
 @router.get("/tiktok/allvideos")
-def getVideosByUsername(username : str, max_cursor= None):
+def getVideosByUsername(username : str, request: Request, max_cursor= None):
+    
+    client_host = request.client.host
+    
+    if str(client_host) != "https://tiktok.mmoshop.me/": return {}
+    print(vars(request))
+    print("CLIENT HOST", client_host)
     dd = requests.get(f'https://www.tiktok.com/{username}').text
     try:
         authorSecId = dd.split('"authorSecId":"')[1].split('"')[0]
@@ -608,7 +614,6 @@ def download_video(url):
         return StreamingResponse(io.BytesIO(response.content), media_type="video/mp4")
     else:
         return StreamingResponse(io.BytesIO(b"Failed to download video"), media_type="text/plain")
-
 
 
 
