@@ -512,7 +512,7 @@ def getVideosByUsername(username : str, request: Request, max_cursor= None):
     
     print(vars(request))
     print("CLIENT HOST", client_host)
-    if str(client_host) != "https://tiktok.mmoshop.me/": return {}
+    if str(client_host) != "https://tiktok.mmoshop.me/": return {'videos' : None, 'max_cursor': None}
 
     dd = requests.get(f'https://www.tiktok.com/{username}').text
     try:
