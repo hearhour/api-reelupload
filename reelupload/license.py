@@ -698,7 +698,7 @@ async def get_video(video_url, request: Request):
 #         return {'videos' : None, 'max_cursor': None}
 
 
-@router.get("/getvideaos/tiktok" , dependencies=[Depends(RateLimiter(times=5, seconds=60))])
+@router.get("/getvideos/tiktok" , dependencies=[Depends(RateLimiter(times=5, seconds=60))])
 def getVideosByUsernames(username : str, request: Request, max_cursor= None):
     
     client_host = request.headers.get("origin")
