@@ -786,6 +786,10 @@ def get_videos_by_link(post_url):
         # Set the custom User-Agent
         L.context.user_agent = custom_user_agent
 
+        # Prompt user for login credentials
+        username = 'kickerstyle8'
+        L.load_session_from_file(username)  # Load session if available, otherwise login interactively
+
         # Load the post from the provided URL
         post = instaloader.Post.from_shortcode(L.context, post_url.split("/")[-2])
 
