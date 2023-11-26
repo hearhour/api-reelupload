@@ -788,7 +788,18 @@ def get_videos_by_link(post_url):
 
         # Prompt user for login credentials
         username = 'kickerstyle8'
-        L.load_session_from_file(username)  # Load session if available, otherwise login interactively
+
+        # Provide a default session filename
+        session_filename = f'/tmp/.instaloader-root/session-{username}'
+
+        try:
+            # Try to load the session from the file
+            L.load_session_from_file(username, filename=session_filename)
+        except FileNotFoundError:
+            # If the file doesn't exist, login interactively and save the session
+            L.context.log("Session file not found. Logging in interactively.")
+            L.interactive_login(username)
+            L.save_session_to_file(filename=session_filename)
 
         # Load the post from the provided URL
         post = instaloader.Post.from_shortcode(L.context, post_url.split("/")[-2])
