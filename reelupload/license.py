@@ -780,11 +780,12 @@ def getVideosBylink(post_url):
     try:
     # Load the post from the provided URL
         post = instaloader.Post.from_shortcode(L.context, post_url.split("/")[-2])
-        # print('post.caption' , post.caption)
-        # print(post.likes)
-        # print(post.video_url)
-        # print(post.video_duration)
-        # print(post.url)
+        
+        print('post.caption' , post.caption)
+        print(post.likes)
+        print(post.video_url)
+        print(post.video_duration)
+        print(post.url)
         return {'title': post.caption, 'url': post.url, 'like': post.likes}
 
 
