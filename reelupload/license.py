@@ -777,6 +777,7 @@ def getVideosByUsernames(username : str, request: Request, max_cursor= None):
 @router.get("/getvideoas/instagram" )
 def getVideosBylink(post_url):
     L = instaloader.Instaloader()
+    post_url = 'https://www.instagram.com/p/Cp3PX3nusXB/'
     try:
     # Load the post from the provided URL
         post = instaloader.Post.from_shortcode(L.context, post_url.split("/")[-2])
