@@ -774,21 +774,28 @@ def getVideosByUsernames(username : str, request: Request, max_cursor= None):
 
 
 
-@router.get("/getvideoas/instagram" )
-def getVideosBylink(post_url):
+@router.get("/getvideoas/instagram")
+def get_videos_by_link(post_url):
+    # Set your custom User-Agent string
+    custom_user_agent = "Mozilla/5.0 (Linux; Android 10; X95 Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/118.0.0.0 Mobile Safari/537.36 Instagram 307.0.0.34.111 Android (29/10; 240dpi; 540x1095; DOOGEE; X95; X95; mt6737; pt_BR; 532277834)"
+
+    # Create an Instaloader object
     L = instaloader.Instaloader()
-    post_url = 'https://www.instagram.com/p/Cp3PX3nusXB/'
+
     try:
-    # Load the post from the provided URL
+        # Set the custom User-Agent
+        L.context.user_agent = custom_user_agent
+
+        # Load the post from the provided URL
         post = instaloader.Post.from_shortcode(L.context, post_url.split("/")[-2])
-        
-        print('post.caption' , post.caption)
+
+        print('post.caption', post.caption)
         print(post.likes)
         print(post.video_url)
         print(post.video_duration)
         print(post.url)
-        return {'title': post.caption, 'url': post.url, 'like': post.likes}
 
+        return {'title': post.caption, 'video': post.video_url, 'thumbnail': post.url, 'like': post.likes}
 
     except instaloader.exceptions.InstaloaderException as e:
         print(f"Error: {e}")
