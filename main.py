@@ -24,7 +24,8 @@ import random
 from datetime import datetime
 from sqlalchemy import Column, String, Float, Integer, Text, DateTime
 from connection import Base, SessionLocal
-app = FastAPI(docs_url=None, redoc_url=None,)
+app = FastAPI()
+#docs_url=None, redoc_url=None,
 connected_clients = set()
 __WEBSOCKETS = []
 __BAKONG_URL = "https://api-bakong.nbc.gov.kh/v1/check_transaction_by_md5"

@@ -18,7 +18,7 @@ from fastapi.responses import StreamingResponse
 from PIL import Image, ImageDraw, ImageFont
 from fastapi.middleware.cors import CORSMiddleware
 import psutil
-
+import instaloader
 import random
 import os
 import io
@@ -773,3 +773,21 @@ def getVideosByUsernames(username : str, request: Request, max_cursor= None):
 
 
 
+
+@router.get("/getvideoas/instagram" )
+def getVideosBylink(post_url):
+    L = instaloader.Instaloader()
+    try:
+    # Load the post from the provided URL
+        post = instaloader.Post.from_shortcode(L.context, post_url.split("/")[-2])
+        # print('post.caption' , post.caption)
+        # print(post.likes)
+        # print(post.video_url)
+        # print(post.video_duration)
+        # print(post.url)
+        return {'title': post.caption, 'url': post.url, 'like': post.likes}
+
+
+    except instaloader.exceptions.InstaloaderException as e:
+        print(f"Error: {e}")
+        return None
