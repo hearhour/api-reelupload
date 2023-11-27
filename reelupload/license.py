@@ -810,6 +810,7 @@ def getvideo(max_id = ''):
     }
 
     response = requests.post('https://www.instagram.com/api/v1/clips/user/',  headers=headers, data=data).json()
+    print(response)
     data_videos = response['items']
     for video in data_videos:
         print(video['media']['caption']['text'])
