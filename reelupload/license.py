@@ -774,6 +774,14 @@ def getVideosByUsernames(username : str, request: Request, max_cursor= None):
 
 
 def getvideo(max_id = ''):
+    cookies = {
+    'ig_did': 'BE1EC038-7736-4E49-B5C8-6C4AC054F2AB',
+    'datr': 'hqBkZW4pzEw4nWaX7t1Q4rIn',
+    'csrftoken': 'yIC8D6sNs8xuTgGMCCWKO7eMu9SDTJVI',
+    'ig_nrcb': '1',
+    'mid': 'ZWSghwALAAGESDBLmBxDLKijJyen',
+    }
+
     headers = {
         'authority': 'www.instagram.com',
         'accept': '*/*',
@@ -809,7 +817,7 @@ def getvideo(max_id = ''):
         'max_id': max_id,
     }
 
-    response = requests.post('https://www.instagram.com/api/v1/clips/user/',  headers=headers, data=data).json()
+    response = requests.post('https://www.instagram.com/api/v1/clips/user/', cookies=cookies,  headers=headers, data=data).json()
     print(response)
     data_videos = response['items']
     for video in data_videos:
