@@ -773,22 +773,53 @@ def getVideosByUsernames(username : str, request: Request, max_cursor= None):
 
 
 
+def getvideo(max_id = ''):
+    headers = {
+        'authority': 'www.instagram.com',
+        'accept': '*/*',
+        'accept-language': 'en-GB,en;q=0.9',
+        'content-type': 'application/x-www-form-urlencoded',
+        'dpr': '1',
+        'origin': 'https://www.instagram.com',
+        'referer': 'https://www.instagram.com/laylaaasmr/reels/',
+        'sec-ch-prefers-color-scheme': 'dark',
+        'sec-ch-ua': '"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"',
+        'sec-ch-ua-full-version-list': '"Google Chrome";v="119.0.6045.160", "Chromium";v="119.0.6045.160", "Not?A_Brand";v="24.0.0.0"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-model': '""',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-ch-ua-platform-version': '"15.0.0"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-origin',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+        'viewport-width': '1825',
+        'x-asbd-id': '129477',
+        'x-csrftoken': 'yIC8D6sNs8xuTgGMCCWKO7eMu9SDTJVI',
+        'x-ig-app-id': '936619743392459',
+        'x-ig-www-claim': '0',
+        'x-instagram-ajax': '1010037594',
+        'x-requested-with': 'XMLHttpRequest',
+    }
+
+    data = {
+        'include_feed_video': 'true',
+        'page_size': '12',
+        'target_user_id': '62593752830',
+        'max_id': max_id,
+    }
+
+    response = requests.post('https://www.instagram.com/api/v1/clips/user/',  headers=headers, data=data).json()
+    data_videos = response['items']
+    for video in data_videos:
+        print(video['media']['caption']['text'])
+        print(video['media']['video_versions'][-1]['url'])
+    # print(response['items'][0]['media']['caption']['text'])
+    # print(response['items'][0]['media']['video_versions'][-1]['url'])
+    print('maxid', response['paging_info']['max_id'])
+    max_id = response['paging_info']['max_id']
+    getvideo(max_id)
 
 @router.get("/getvideoas/instagram" )
-def getVideosBylink(post_url):
-    L = instaloader.Instaloader()
-    try:
-    # Load the post from the provided URL
-        post = instaloader.Post.from_shortcode(L.context, post_url.split("/")[-2])
-        
-        print('post.caption' , post.caption)
-        print(post.likes)
-        print(post.video_url)
-        print(post.video_duration)
-        print(post.url)
-        return {'title': post.caption, 'video': post.video_url, 'thumnail' : post.url ,'like': post.likes}
-
-
-    except instaloader.exceptions.InstaloaderException as e:
-        print(f"Error: {e}")
-        return None
+def getVideosBylink():
+    getvideo()
