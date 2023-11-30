@@ -208,6 +208,37 @@ def farmreel_user(license: str, head : str):
         return None
 
 
+@router.get("/quickdownload/user")
+def farmreel_user(license: str, head : str):
+    try:
+        if head == 'apireel':
+            db = get_mysql_farmreel()
+            cursor = db.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM quickdownload WHERE license = %s", (license,))
+            rows = cursor.fetchone()
+            cursor.close()
+            return rows
+        else:
+            return None
+    except Exception as e:
+        return None
+    
+@router.get("/quickdownload/updateexpire")
+def update_expire(license):
+    try:
+        random_text = generate_random_text()
+        db = get_mysql_farmreel()
+        cursor = db.cursor(dictionary=True)
+        update_query = "UPDATE quickdownload SET license = %s WHERE license = %s"
+        cursor.execute(update_query, (str(license) + 'expirekey_' + random_text, license))
+        db.commit()
+        db.close()
+        return {"data": "update success"}
+    except Exception as e:
+        print(e)
+        return None
+
+
 @router.get("/farmreel/insertkey")
 def farmreel_insertkey(license, buykey):
     try:
