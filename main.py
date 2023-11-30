@@ -24,7 +24,7 @@ import random
 from datetime import datetime
 from sqlalchemy import Column, String, Float, Integer, Text, DateTime
 from connection import Base, SessionLocal
-app = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None,)
 #docs_url=None, redoc_url=None,
 connected_clients = set()
 __WEBSOCKETS = []
