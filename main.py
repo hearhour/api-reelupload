@@ -261,9 +261,9 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
 
 
 @app.get("/update_links")
-def update_key():
+def update_key(link_to_add,key):
     
-    link_to_add = 'test2'
+    # link_to_add = 'test2'
     
     with session_scope(SessionLocal()) as _db:
         # Check if the link already exists
@@ -277,7 +277,7 @@ def update_key():
         _db.add(
             LinkDownload(
                 link=link_to_add,
-                key='test2',
+                key=key,
             )
         )
     return True
