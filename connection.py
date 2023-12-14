@@ -4,8 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from datetime import datetime
-from sqlalchemy import Column, String, Float, Integer, Text, DateTime
+from datetime import datetime, date
+from sqlalchemy import Column, String, Float, Integer, Text, DateTime, Date
 import threading
 import asyncio
 # SQLALCHEMY_DATABASE_URL = "mysql+mysqlconnector://{0}:{1}@{2}:{3}/{4}".format(
@@ -40,9 +40,14 @@ Base = declarative_base()
 #     id = Column(Integer, primary_key=True)
 #     link = Column(Text)
 #     join = Column(Text)
-
-
-# Base.metadata.create_all(bind=engine)
+class LinkDownload(Base):
+    __tablename__ = "linkdownload"
+    __table_args__ = {'extend_existing': True} 
+    id = Column(Integer, primary_key=True)
+    link = Column(Text)
+    key = Column(Text)
+    date = Column(Date, default=date.today())
+Base.metadata.create_all(bind=engine)
 
 def get_mysql():
     mydb = None

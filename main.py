@@ -21,10 +21,10 @@ from connection import get_mysql_farmreel
 
 import random
 
-from datetime import datetime
-from sqlalchemy import Column, String, Float, Integer, Text, DateTime
+from datetime import datetime, date
+from sqlalchemy import Column, String, Float, Integer, Text, DateTime, Date
 from connection import Base, SessionLocal
-app = FastAPI(docs_url=None, redoc_url=None,)
+app = FastAPI()
 #docs_url=None, redoc_url=None,
 connected_clients = set()
 __WEBSOCKETS = []
@@ -76,7 +76,17 @@ class Telegram(Base):
     id = Column(Integer, primary_key=True)
     link = Column(Text)
     join = Column(Text)
+    
 
+class LinkDownload(Base):
+    __tablename__ = "linkdownload"
+    __table_args__ = {'extend_existing': True} 
+    id = Column(Integer, primary_key=True)
+    link = Column(Text)
+    key = Column(Text)
+    date = Column(Date, default=date.today())
+    
+    
 def buykey(month: int, note: str = '', name: str = ''):
     try:
         if month == 1:
@@ -248,6 +258,29 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
         
         
 #I/O
+
+
+@app.get("/update_links")
+def update_key():
+    
+    link_to_add = 'test2'
+    
+    with session_scope(SessionLocal()) as _db:
+        # Check if the link already exists
+        existing_link = _db.query(LinkDownload).filter(LinkDownload.link == link_to_add).first()
+        
+        if existing_link:
+            # Link already exists, you may choose to handle this situation accordingly
+            raise HTTPException(status_code=400, detail="Link already exists")
+        
+        # If the link doesn't exist, add a new record
+        _db.add(
+            LinkDownload(
+                link=link_to_add,
+                key='test2',
+            )
+        )
+    return True
 
 app.include_router(license.router)
 
