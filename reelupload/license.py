@@ -175,7 +175,7 @@ def ld_insertkey(license: str):
     
 @router.get("/status_ld")
 def status_ld():
-    return {'status' : 'farmreelv2'}
+    return {'status' : 'farmreel'}
 
 @router.get("/status_quickdownload")
 def status_quickdownload():
