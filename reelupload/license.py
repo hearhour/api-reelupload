@@ -137,7 +137,37 @@ def buykey(token: int, month: int):
     else:
         return 'Token not valid'
 
+@router.get("/generate_name")
+def generate_name():
+    names = []
+    
+    def generate_name():
+        vowels = 'aeiou'
+        consonants = 'bcdfghjklmnpqrstvwxyz'
+        current_month = datetime.now().month
+        starting_letters = {
+            1: 'A', 2: 'F', 3: 'M', 4: 'A', 5: 'M', 6: 'J',
+            7: 'J', 8: 'A', 9: 'S', 10: 'O', 11: 'N', 12: 'D'
+        }
+        starting_letter = starting_letters.get(current_month, 'S')  # Default to 'S' for other months
 
+        name_length = random.randint(6, 8)
+        name = starting_letter
+
+        for i in range(1, name_length):
+            if i % 2 == 0:
+                name += random.choice(vowels)
+            else:
+                name += random.choice(consonants)
+
+        return name
+    
+    for _ in range(20):
+        generated_name = generate_name()
+        names.append(generated_name)
+    
+    return names
+    
 
 @router.get("/ld_datakey")
 def ld_read_rootsss(license):

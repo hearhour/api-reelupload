@@ -258,7 +258,27 @@ async def websocket_endpoint(websocket: WebSocket, md5: str):
         
         
 #I/O
+@app.get("/get_links_by_date")
+def get_links_by_date(start_date: str, end_date: str, skip: int = 0, limit: int = 100):
+    # Parse input strings to date objects
+    start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+    end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
 
+    with session_scope(SessionLocal()) as _db:
+        links = (
+            _db.query(LinkDownload)
+            .filter(LinkDownload.date.between(start_date, end_date))
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+        
+        get_links = []
+        for link in links:
+            # print(f"Link ID: {link.id}, Link: {link.link}, Date Added: {link.date}")
+            get_links.append(link.link)
+
+        return get_links
 
 @app.get("/update_links")
 def update_key(link_to_add,key):
